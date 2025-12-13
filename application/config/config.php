@@ -23,7 +23,12 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 | a PHP script and you can easily do that on your own.
 |
 */
-$config['base_url'] = 'https://ipaterpadu-6estemlearning-tel.my.id/';
+$__app_base = getenv('APP_BASE_URL');
+$config['base_url'] = getenv('APP_BASE_URL') ?: (
+    (isset($_SERVER['HTTPS']) ? 'https' : 'http')
+    . '://' . $_SERVER['HTTP_HOST'] . '/'
+);
+
 
 /*
 |--------------------------------------------------------------------------

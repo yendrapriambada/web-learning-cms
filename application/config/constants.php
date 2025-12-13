@@ -84,4 +84,5 @@ defined('EXIT_DATABASE')       OR define('EXIT_DATABASE', 8); // database error
 defined('EXIT__AUTO_MIN')      OR define('EXIT__AUTO_MIN', 9); // lowest automatically-assigned error code
 defined('EXIT__AUTO_MAX')      OR define('EXIT__AUTO_MAX', 125); // highest automatically-assigned error code
 
-defined('GOOGLE_CLIENT_ID') OR define('GOOGLE_CLIENT_ID', 'REPLACE_WITH_GOOGLE_CLIENT_ID');
+$__gcid = getenv('GOOGLE_CLIENT_ID');
+defined('GOOGLE_CLIENT_ID') OR define('GOOGLE_CLIENT_ID', $__gcid ? $__gcid : '71410603766-i3k8lkqgl69a551v03kpjp4jp2q887mj.apps.googleusercontent.com');

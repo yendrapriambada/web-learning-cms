@@ -30,6 +30,11 @@ class Login extends CI_Controller {
 		$this->session->set_userdata('foto_profil', $dataById->foto_profil);
 		$this->session->set_userdata('role_user', $dataById->role_user);
 		$this->session->set_userdata('angkatan', $dataById->angkatan);
+		$this->session->set_userdata(
+			'flag_type_account',
+			isset($dataById->flag_type_account) ? $dataById->flag_type_account :
+			(isset($data->flag_type_account) ? $data->flag_type_account : NULL)
+		);
 
 		$this->session->set_userdata('logged_in', TRUE);
 
@@ -225,6 +230,13 @@ class Login extends CI_Controller {
 		$existing = $this->db->get_where('tb_user', array('email' => $email));
 		if ($existing->num_rows() > 0) {
 			$userRow = $existing->row();
+			if (!isset($userRow->flag_type_account) || $userRow->flag_type_account !== 'google') {
+				$this->M_user->update($userRow->id_user, array(
+					'flag_type_account' => 'google',
+					'updated_at'        => date('Y-m-d H:i:s')
+				));
+				$userRow->flag_type_account = 'google';
+			}
 			$this->setSession($userRow);
 			return;
 		}
@@ -268,13 +280,14 @@ class Login extends CI_Controller {
 			'id_role_user'   => 1,
 			'nama_lengkap'   => $name,
 			'angkatan'       => NULL,
-			'sekolah'        => 'Google',
+			'sekolah'        => NULL,
 			'email'          => $email,
-			'tanggal_lahir'  => '1970-01-01',
-			'jenis_kelamin'  => 'U',
+			'tanggal_lahir'  => NULL,
+			'jenis_kelamin'  => NULL,
 			'foto_profil'    => $fotoFile,
 			'username'       => $username,
 			'password'       => md5(uniqid('google_', true)),
+			'flag_type_account' => 'google',
 			'created_at'     => date('Y-m-d H:i:s'),
 			'updated_at'     => NULL
 		);
