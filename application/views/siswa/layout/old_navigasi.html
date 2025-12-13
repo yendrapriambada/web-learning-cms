@@ -1,0 +1,94 @@
+<div class="header_top_section">
+    <div class="container">
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="header_top_main">
+                    <!-- <div class="call_text">Pendidikan IPA Terpadu</div> -->
+                     <div class="call_text">
+                        <img src="<?= base_url().'assets/logo/white with type.png'?>" alt="" srcset="" width="100px">
+                     </div>
+                    <?php
+                        $segment = $this->uri->segment(1);
+                        if (is_null($segment)) {
+                            $segment = '';
+                        }
+
+                        $segment2 = $this->uri->segment(2);
+                        if (is_null($segment2)) {
+                            $segment2 = '';
+                        }
+                    ?>
+
+                    <!-- Login -->
+                    <a href="<?= base_url()."Login"?>" class="btn btn-outline-light text-right mr-3 
+                        <?php 
+                            if(strtolower($segment) == "login")
+                                {
+                                    echo "active"; 
+                                } 
+                            elseif (strtolower($segment) == "") 
+                                {
+                                    echo "active"; 
+                                }
+                        ?>
+                    ">Login</a>
+
+                    <!-- Pengenalan Mata Kuliah -->
+                    <a href="<?= base_url()."siswa/PengenalanMataKuliah"?>" class="btn btn-outline-light text-right mr-3
+                        <?php 
+                            if(strtolower($segment2) == "pengenalanmatakuliah")
+                                {
+                                    echo " active"; 
+                                }
+                        ?>
+                    ">Pengenalan Mata Kuliah</a>
+
+                    <!-- Pertemuan -->
+                    <?php if($this->session->userdata('id_user') != NULL && $this->session->userdata('id_role_user') != 2 && $pertemuan != NULL) { ?>
+                        <div class="dropdown">
+                            <button class="btn btn-outline-light dropdown-toggle mr-3 <?php if(strtolower($segment2) == "pertemuan") echo " active";?>" 
+                                    type="button" 
+                                    id="dropdownMenuButton1" 
+                                    data-toggle="dropdown" 
+                                    aria-haspopup="true" 
+                                    aria-expanded="false">
+                                    Pertemuan
+                            </button>
+                            <div class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
+                                <?php foreach ($pertemuan as $p) {
+                                    if ($p->status == '1') { ?>
+                                        <a class="dropdown-item" href="<?= base_url().'siswa/Pertemuan/worksheet/'.$p->id_pertemuan?>"><?= $p->judul_pertemuan?></a>
+                                <?php } } ?>
+                            </div>
+                        </div>
+                    <?php } else { ?>
+
+                    <a href="#" class="btn btn-outline-light text-right mr-3
+                        <?php 
+                            if(strtolower($segment2) == "pertemuan")
+                                {
+                                    echo " active"; 
+                                }
+                        ?>
+                    ">Pertemuan</a>
+
+                    <?php }?>
+
+                    <!-- Profil -->
+                    <?php if($this->session->userdata('id_user') != NULL && $this->session->userdata('id_role_user') != 2) { ?>
+                        <div class="dropdown">
+                            <button class="btn btn-outline-light dropdown-toggle mr-3" type="button" id="dropdownMenuButton2" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                <i class="fa fa-user mr-2" aria-hidden="true"></i> <?= $this->session->userdata('nama_lengkap');?>
+                            </button>
+                            <div class="dropdown-menu" aria-labelledby="dropdownMenuButton2">
+                                <a class="dropdown-item" href="<?= base_url().'siswa/Profil'?>"><i class="fa fa-user mr-2" aria-hidden="true"></i> Profil</a>
+                                <a class="dropdown-item" href="<?= base_url().'siswa/UbahKataSandi'?>"><i class="fa fa-pencil mr-2" aria-hidden="true"></i> Ganti Kata Sandi</a>
+                                <a class="dropdown-item" href="<?= base_url().'Logout'?>"><i class="fa fa-sign-out mr-2" aria-hidden="true"></i> Log Out</a>
+                            </div>
+                        </div>
+                    <?php } ?>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
