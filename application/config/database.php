@@ -76,9 +76,12 @@ $query_builder = TRUE;
 $db['default'] = array(
 	'dsn'	=> '',
 	'hostname' => 'localhost',
-	'username' => 'ipar7647_guruipastem',
-	'password' => 'guruadmin#123',
+	// 'username' => 'ipar7647_guruipastem',
+	// 'password' => 'guruadmin#123',
 	'database' => 'ipar7647_db_ipa_terpadu',
+	'username' => 'root',
+	'password' => '',
+
 	'dbdriver' => 'mysqli',
 	'dbprefix' => '',
 	'pconnect' => FALSE,
@@ -93,5 +96,6 @@ $db['default'] = array(
 	'stricton' => FALSE,
 	'failover' => array(),
 	'save_queries' => TRUE,
-	'port' => 3307, // Ganti 3307 dengan port baru
+	// 'port' => 3307, // Ganti 3307 dengan port baru
+	'port' => 3306,
 );
