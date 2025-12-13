@@ -164,4 +164,133 @@ class Login extends CI_Controller {
 			return false;
 		}
 	}
+
+	public function google_signin()
+	{
+		$idToken = $this->input->post('credential');
+		if (!$idToken) {
+			$this->session->set_flashdata('logged_in', '0');
+			$this->session->set_flashdata('class_alert', 'danger');
+			$this->session->set_flashdata('error', 'Token Google tidak ditemukan');
+			redirect('Login');
+			return;
+		}
+
+		$verifyUrl = 'https://oauth2.googleapis.com/tokeninfo?id_token=' . urlencode($idToken);
+		$response = null;
+		$httpCode = 0;
+		if (function_exists('curl_init')) {
+			$ch = curl_init();
+			curl_setopt($ch, CURLOPT_URL, $verifyUrl);
+			curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+			curl_setopt($ch, CURLOPT_TIMEOUT, 10);
+			$response = curl_exec($ch);
+			$httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+			curl_close($ch);
+		} else {
+			$context = stream_context_create(array('http' => array('method' => 'GET', 'timeout' => 10)));
+			$response = @file_get_contents($verifyUrl, false, $context);
+			$httpCode = $response ? 200 : 0;
+		}
+
+		if ($httpCode !== 200 || !$response) {
+			$this->session->set_flashdata('logged_in', '0');
+			$this->session->set_flashdata('class_alert', 'danger');
+			$this->session->set_flashdata('error', 'Verifikasi Google gagal');
+			redirect('Login');
+			return;
+		}
+
+		$data = json_decode($response, true);
+		if (!$data || !isset($data['aud']) || $data['aud'] !== GOOGLE_CLIENT_ID) {
+			$this->session->set_flashdata('logged_in', '0');
+			$this->session->set_flashdata('class_alert', 'danger');
+			$this->session->set_flashdata('error', 'Client ID Google tidak cocok');
+			redirect('Login');
+			return;
+		}
+
+		if (!isset($data['email']) || !isset($data['email_verified']) || $data['email_verified'] !== 'true') {
+			$this->session->set_flashdata('logged_in', '0');
+			$this->session->set_flashdata('class_alert', 'danger');
+			$this->session->set_flashdata('error', 'Email Google belum terverifikasi');
+			redirect('Login');
+			return;
+		}
+
+		$email = $data['email'];
+		$name = isset($data['name']) ? $data['name'] : $email;
+		$picture = isset($data['picture']) ? $data['picture'] : null;
+
+		$existing = $this->db->get_where('tb_user', array('email' => $email));
+		if ($existing->num_rows() > 0) {
+			$userRow = $existing->row();
+			$this->setSession($userRow);
+			return;
+		}
+
+		$usernameBase = strtolower(preg_replace('/[^a-zA-Z0-9_]/', '_', strstr($email, '@', true)));
+		if ($usernameBase === false || $usernameBase === '') {
+			$usernameBase = 'user_' . substr(md5($email), 0, 8);
+		}
+		$username = $usernameBase;
+		$counter = 1;
+		while ($this->db->get_where('tb_user', array('username' => $username))->num_rows() > 0) {
+			$username = $usernameBase . '_' . $counter;
+			$counter++;
+		}
+
+		$fotoFile = null;
+		if ($picture) {
+			$tmpFile = FCPATH . 'assets/uploads/' . 'google_' . uniqid() . '.jpg';
+			$imgData = null;
+			$imgCode = 0;
+			if (function_exists('curl_init')) {
+				$chImg = curl_init($picture);
+				curl_setopt($chImg, CURLOPT_RETURNTRANSFER, true);
+				curl_setopt($chImg, CURLOPT_FOLLOWLOCATION, true);
+				curl_setopt($chImg, CURLOPT_TIMEOUT, 10);
+				$imgData = curl_exec($chImg);
+				$imgCode = curl_getinfo($chImg, CURLINFO_HTTP_CODE);
+				curl_close($chImg);
+			} else {
+				$imgData = @file_get_contents($picture);
+				$imgCode = $imgData ? 200 : 0;
+			}
+			if ($imgCode === 200 && $imgData) {
+				if (@file_put_contents($tmpFile, $imgData) !== false) {
+					$fotoFile = basename($tmpFile);
+				}
+			}
+		}
+
+		$insert = array(
+			'id_role_user'   => 1,
+			'nama_lengkap'   => $name,
+			'angkatan'       => NULL,
+			'sekolah'        => 'Google',
+			'email'          => $email,
+			'tanggal_lahir'  => '1970-01-01',
+			'jenis_kelamin'  => 'U',
+			'foto_profil'    => $fotoFile,
+			'username'       => $username,
+			'password'       => md5(uniqid('google_', true)),
+			'created_at'     => date('Y-m-d H:i:s'),
+			'updated_at'     => NULL
+		);
+
+		$this->M_user->tambahdata($insert);
+
+		$newUser = $this->db->get_where('tb_user', array('email' => $email));
+		if ($newUser->num_rows() > 0) {
+			$this->setSession($newUser->row());
+			return;
+		} else {
+			$this->session->set_flashdata('logged_in', '0');
+			$this->session->set_flashdata('class_alert', 'danger');
+			$this->session->set_flashdata('error', 'Gagal membuat akun Google');
+			redirect('Login');
+			return;
+		}
+	}
 }
