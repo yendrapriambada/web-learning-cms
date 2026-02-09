@@ -22,23 +22,13 @@
             <div class="collapse navbar-collapse" id="navbarSupportedContent">
                 <ul class="navbar-nav ml-auto">
                     
-                    <!-- Login -->
-                    <li class="nav-item" <?php if($this->session->userdata('id_user') != NULL) { echo "style='display:none'";}?>>
-                    <a href="<?= base_url()."Login"?>" class="nav-link-d btn btn-outline-light btn-block mr-3
-                    <?php 
-                        if(strtolower($segment) == "login")
-                            {
-                                echo " active"; 
-                            }
-                    ?>
-                    ">Login</a>
-                    </li>
+                    
                     
                     <!-- Beranda -->
                     <li class="nav-item">
                     <a href="<?= base_url()."Beranda"?>" class="nav-link-d btn btn-outline-light btn-block mr-3
                     <?php 
-                        if(strtolower($segment) == "beranda")
+                        if(strtolower($segment) == "beranda" || $segment == "")
                             {
                                 echo " active"; 
                             }
@@ -46,17 +36,18 @@
                     ">Beranda</a>
                     </li>
                     
-                    <!-- Pengenalan Worksheet -->
-                    <li class="nav-item">
-                    <a href="<?= base_url()."siswa/PengenalanMataKuliah"?>" class="nav-link-d btn btn-outline-light btn-block mr-3
-                    <?php 
-                        if(strtolower($segment2) == "pengenalanmatakuliah")
-                            {
-                                echo " active"; 
-                            }
-                    ?>
-                    ">Pengenalan Worksheet</a>
-                    </li>
+                    <?php if($this->session->userdata('id_user') != NULL) { ?>
+                        <li class="nav-item">
+                        <a href="<?= base_url()."siswa/PengenalanMataKuliah"?>" class="nav-link-d btn btn-outline-light btn-block mr-3
+                        <?php 
+                            if(strtolower($segment2) == "pengenalanmatakuliah")
+                                {
+                                    echo " active"; 
+                                }
+                        ?>
+                        ">Pengenalan Worksheet</a>
+                        </li>
+                    <?php } ?>
                     
                     <!-- Pertemuan / Proyek -->
                     <li class="nav-item">
@@ -114,17 +105,31 @@
                     </li>
                     
                     
-                    <!-- Sumber Belajar -->
-                    <li class="nav-item">
-                    <a href="<?= base_url()."siswa/SumberBelajar"?>" class="nav-link-d btn btn-outline-light btn-block mr-3
-                    <?php 
-                        if(strtolower($segment2) == "sumberbelajar")
-                            {
-                                echo " active"; 
-                            }
-                    ?>
-                    ">Sumber Belajar</a>
-                    </li>
+                    <?php if($this->session->userdata('id_user') != NULL) { ?>
+                        <li class="nav-item">
+                        <a href="<?= base_url()."siswa/SumberBelajar"?>" class="nav-link-d btn btn-outline-light btn-block mr-3
+                        <?php 
+                            if(strtolower($segment2) == "sumberbelajar")
+                                {
+                                    echo " active"; 
+                                }
+                        ?>
+                        ">Sumber Belajar</a>
+                        </li>
+                    <?php } ?>
+
+                    <?php if($this->session->userdata('id_user') != NULL) { ?>
+                        <li class="nav-item">
+                        <a href="<?= base_url()."siswa/Nilai"?>" class="nav-link-d btn btn-outline-light btn-block mr-3
+                        <?php 
+                            if(strtolower($segment2) == "nilai")
+                                {
+                                    echo " active"; 
+                                }
+                        ?>
+                        ">Penilaian</a>
+                        </li>
+                    <?php } ?>
 
                     <!-- Panduan -->
                     <li class="nav-item">
@@ -138,17 +143,7 @@
                     ">Panduan Worksheet</a>
                     </li>
                     
-                    <!-- Nilai -->
-                    <li class="nav-item">
-                    <a href="<?= base_url()."siswa/Nilai"?>" class="nav-link-d btn btn-outline-light btn-block mr-3
-                    <?php 
-                        if(strtolower($segment2) == "nilai")
-                            {
-                                echo " active"; 
-                            }
-                    ?>
-                    ">Nilai</a>
-                    </li>
+                    
 
                     <!-- Profil -->
                     <li class="nav-item">
@@ -166,6 +161,19 @@
                                 </div>
                             </div>
                     <?php } ?>
+                    </li>
+
+
+                    <!-- Login -->
+                    <li class="nav-item" <?php if($this->session->userdata('id_user') != NULL) { echo "style='display:none'";}?>>
+                    <a href="<?= base_url()."Login"?>" class="nav-link-d btn btn-outline-light btn-block mr-3
+                    <?php 
+                        if(strtolower($segment) == "login")
+                            {
+                                echo " active"; 
+                            }
+                    ?>
+                    ">Login</a>
                     </li>
                 </ul>
             </div>
