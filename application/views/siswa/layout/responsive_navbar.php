@@ -22,23 +22,13 @@
             <div class="collapse navbar-collapse" id="navbarSupportedContent">
                 <ul class="navbar-nav ml-auto">
                     
-                    <!-- Login -->
-                    <li class="nav-item" <?php if($this->session->userdata('id_user') != NULL) { echo "style='display:none'";}?>>
-                    <a href="<?= base_url()."Login"?>" class="nav-link-d btn btn-menu-custom btn-block mr-3
-                    <?php 
-                        if(strtolower($segment) == "login")
-                            {
-                                echo " active"; 
-                            }
-                    ?>
-                    ">Login</a>
-                    </li>
+                    
                     
                     <!-- Beranda -->
                     <li class="nav-item">
                     <a href="<?= base_url()."Beranda"?>" class="nav-link-d btn btn-menu-custom btn-block mr-3
                     <?php 
-                        if(strtolower($segment) == "beranda")
+                        if(strtolower($segment) == "beranda" || $segment == "")
                             {
                                 echo " active"; 
                             }
@@ -46,29 +36,19 @@
                     ">Beranda</a>
                     </li>
                     
-                    <!-- Pengenalan Worksheet -->
-                    <!--<li class="nav-item">-->
-                    <!--<a href="<?= base_url()."siswa/PengenalanMataKuliah"?>" class="nav-link-d btn btn-outline-light btn-block mr-3-->
-                    <!--<?php?> -->
-                    <!--    if(strtolower($segment2) == "pengenalanmatakuliah")-->
-                    <!--        {-->
-                    <!--            echo " active"; -->
-                    <!--        }-->
-                    <!--?>-->
-                    <!--">Oriantasi Perkuliahan</a>-->
-                    <!--</li>-->
-                    <li class="nav-item">
-                        <div class="dropdown">
-                            <button class="nav-link-d btn btn-menu-custom btn-block dropdown-toggle mr-3" type="button" id="dropdownMenuButton3" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                            Orientasi Perkuliahan
-                            </button>
-                            <div class="dropdown-menu" aria-labelledby="dropdownMenuButton3">
-                                <a class="dropdown-item" href="<?= base_url().'siswa/PengenalanMataKuliah#mk'?>">Pengenalan Matakuliah</a>
-                                <a class="dropdown-item" href="<?= base_url().'siswa/PengenalanMataKuliah#web'?>">Pengenalan Web-based Worksheet</a>
+                    <?php if($this->session->userdata('id_user') != NULL) { ?>
+                        <li class="nav-item">
+                            <div class="dropdown">
+                                <button class="nav-link-d btn btn-menu-custom btn-block dropdown-toggle mr-3" type="button" id="dropdownMenuButton3" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                Orientasi Perkuliahan
+                                </button>
+                                <div class="dropdown-menu" aria-labelledby="dropdownMenuButton3">
+                                    <a class="dropdown-item" href="<?= base_url().'siswa/PengenalanMataKuliah#mk'?>">Pengenalan Matakuliah</a>
+                                    <a class="dropdown-item" href="<?= base_url().'siswa/PengenalanMataKuliah#web'?>">Pengenalan Web-based Worksheet</a>
+                                </div>
                             </div>
-                        </div>
-                    </li>
-                    
+                        </li>
+                    <?php } ?>
                     
                     <!-- Pertemuan / Proyek -->
                     <li class="nav-item">
@@ -126,40 +106,54 @@
                     </li>
                     
                     
-                    <!-- Sumber Belajar -->
-                    <li class="nav-item">
-                    <a href="<?= base_url()."siswa/SumberBelajar"?>" class="nav-link-d btn btn-menu-custom btn-block mr-3
-                    <?php 
-                        if(strtolower($segment2) == "sumberbelajar")
-                            {
-                                echo " active"; 
-                            }
-                    ?>
-                    ">Sumber Belajar</a>
-                    </li>
-                    
-                    <!-- Nilai -->
-                    <li class="nav-item">
-                    <a href="<?= base_url()."siswa/Nilai"?>" class="nav-link-d btn btn-menu-custom btn-block mr-3
-                    <?php 
-                        if(strtolower($segment2) == "nilai")
-                            {
-                                echo " active"; 
-                            }
-                    ?>
-                    ">⁠Penilaian</a>
-                    </li>
+                    <?php if($this->session->userdata('id_user') != NULL) { ?>
+                        <li class="nav-item">
+                        <a href="<?= base_url()."siswa/SumberBelajar"?>" class="nav-link-d btn btn-menu-custom btn-block mr-3
+                        <?php 
+                            if(strtolower($segment2) == "sumberbelajar")
+                                {
+                                    echo " active"; 
+                                }
+                        ?>
+                        ">Sumber Belajar</a>
+                        </li>
+                    <?php } ?>
 
-                    <!-- Panduan -->
+                    <?php if($this->session->userdata('id_user') != NULL) { ?>
+                        <li class="nav-item">
+                        <a href="<?= base_url()."siswa/Nilai"?>" class="nav-link-d btn btn-outline-light btn-block mr-3
+                        <?php 
+                            if(strtolower($segment2) == "nilai")
+                                {
+                                    echo " active"; 
+                                }
+                        ?>
+                        ">Penilaian</a>
+                        </li>
+                    <?php } ?>
+
+                    < <!-- Panduan -->
                     <li class="nav-item">
-                    <a href="<?= base_url()."siswa/Panduan"?>" class="nav-link-d btn btn-menu-custom btn-block mr-3
+                    <a href="<?= base_url()."siswa/Panduan"?>" class="nav-link-d btn btn-outline-light btn-block mr-3
                     <?php 
                         if(strtolower($segment2) == "panduan")
                             {
                                 echo " active"; 
                             }
                     ?>
-                    ">Panduan</a>
+                    ">Panduan Worksheet</a>
+                    </li>
+                    
+                    <!-- Nilai -->
+                    <li class="nav-item">
+                    <a href="<?= base_url()."siswa/Nilai"?>" class="nav-link-d btn btn-outline-light btn-block mr-3
+                    <?php 
+                        if(strtolower($segment2) == "nilai")
+                            {
+                                echo " active"; 
+                            }
+                    ?>
+                    ">Nilai</a>
                     </li>
 
                     <!-- Profil -->
@@ -178,6 +172,19 @@
                                 </div>
                             </div>
                     <?php } ?>
+                    </li>
+
+
+                    <!-- Login -->
+                    <li class="nav-item" <?php if($this->session->userdata('id_user') != NULL) { echo "style='display:none'";}?>>
+                    <a href="<?= base_url()."Login"?>" class="nav-link-d btn btn-outline-light btn-block mr-3
+                    <?php 
+                        if(strtolower($segment) == "login")
+                            {
+                                echo " active"; 
+                            }
+                    ?>
+                    ">Login</a>
                     </li>
                 </ul>
             </div>
