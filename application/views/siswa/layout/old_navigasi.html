@@ -82,9 +82,7 @@
                             </button>
                             <div class="dropdown-menu" aria-labelledby="dropdownMenuButton2">
                                 <a class="dropdown-item" href="<?= base_url().'siswa/Profil'?>"><i class="fa fa-user mr-2" aria-hidden="true"></i> Profil</a>
-                                <?php if($this->session->userdata('flag_type_account') !== 'google') { ?>
                                 <a class="dropdown-item" href="<?= base_url().'siswa/UbahKataSandi'?>"><i class="fa fa-pencil mr-2" aria-hidden="true"></i> Ganti Kata Sandi</a>
-                                <?php } ?>
                                 <a class="dropdown-item" href="<?= base_url().'Logout'?>"><i class="fa fa-sign-out mr-2" aria-hidden="true"></i> Log Out</a>
                             </div>
                         </div>

@@ -53,35 +53,36 @@
              <div class="container">
                 <div class="row">
                    <div class="col-md-12">
-                      <h1 class="projects_taital">Pengenalan Worksheet</h1>
-                          <div class="nav-tabs-navigation">
-                             <div class="nav-tabs-wrapper">
-                                <ul class="nav" id="worksheetTabs">
-                                   <li class="nav-item">
-                                      <a class="nav-link active tab-link"
-                                         href="#Deskripsi"
-                                         data-target="#Deskripsi">
-                                         Deskripsi
-                                      </a>
-                                   </li>
-                                   <li class="nav-item">
-                                      <a class="nav-link tab-link"
-                                         href="#RPS"
-                                         data-target="#RPS">
-                                         RPS
-                                      </a>
-                                   </li>
-                                </ul>
-                             </div>
-                          </div>
+                      <h1 class="projects_taital">Orientasi Perkuliahan</h1>
+                          <!--<div class="nav-tabs-navigation">-->
+                          <!--   <div class="nav-tabs-wrapper">-->
+                          <!--      <ul class="nav" id="worksheetTabs">-->
+                          <!--         <li class="nav-item">-->
+                          <!--            <a class="nav-link active tab-link"-->
+                          <!--               href="#Deskripsi"-->
+                          <!--               data-target="#Deskripsi">-->
+                          <!--               Deskripsi-->
+                          <!--            </a>-->
+                          <!--         </li>-->
+                          <!--         <li class="nav-item">-->
+                          <!--            <a class="nav-link tab-link"-->
+                          <!--               href="#RPS"-->
+                          <!--               data-target="#RPS">-->
+                          <!--               RPS-->
+                          <!--            </a>-->
+                          <!--         </li>-->
+                          <!--      </ul>-->
+                          <!--   </div>-->
+                          <!--</div>-->
                    </div>
                 </div>
              </div>
            </div>
        
-        <!-- TAB 1: Deskripsi -->
-        <div class="projects_section layout_padding tab-section" id="Deskripsi" style="padding-top: 0px !important">
+        <!-- TAB 1: web -->
+        <div class="projects_section layout_padding tab-section" id="web" style="padding-top: 0px !important">
             <div class="container">
+                <h3>Pengenalan Web-based Worksheet</h3>
                 <div class="pets_section text-justify">
                     <p>
                       Pengembangan Worksheet Pendidikan IPA Terpadu ini dirancang untuk mendukung inovasi pembelajaran pada mata kuliah IPA Terpadu melalui pendekatan 6E STEM Learning (Engage, Explore, Explain, Engineer, Enrich, Evaluate). Model ini memadukan unsur sains, teknologi, rekayasa, dan matematika ke dalam pengalaman belajar yang terstruktur, kontekstual, dan berorientasi pemecahan masalah. Mengacu pada dokumen pengembangan kurikulum dan perangkat ajar, worksheet berbasis web ini menyediakan lingkungan belajar interaktif yang memungkinkan mahasiswa mengakses materi, melakukan eksplorasi, merancang solusi rekayasa sederhana, serta merefleksikan pemahaman mereka secara mandiri maupun kolaboratif.
@@ -93,9 +94,10 @@
             </div>
         </div>
         
-        <!-- TAB 2: RPS -->
-        <div class="projects_section_2 layout_padding tab-section" id="RPS">
+        <!-- TAB 2: mk -->
+        <div class="projects_section layout_padding tab-section" id="mk" style="padding-top: 0px !important">
             <div class="container">
+                <h3>Pengenalan Mata Kuliah</h3>
                 <div class="pets_section">
                     <!-- Identitas Mata Kuliah -->
                     <?php foreach ($matkul as $mk) { ?>
@@ -261,6 +263,14 @@
              }
     
              showTab(target);
+          });
+          
+          // kalau hash di URL berubah (misal via klik navbar global)
+          $(window).on('hashchange', function () {
+             const newHash = window.location.hash;
+             if (newHash && $(newHash).length) {
+                showTab(newHash);
+             }
           });
     
           // kondisi awal: cek hash URL

@@ -66,22 +66,6 @@
                      </div>
                   <?php } ?>
 
-                  <div class="mb-3">
-                     <div id="g_id_onload"
-                          data-client_id="<?= GOOGLE_CLIENT_ID ?>"
-                          data-login_uri="<?= base_url().'Login/google_signin' ?>"
-                          data-auto_prompt="false">
-                     </div>
-                     <div class="g_id_signin"
-                          data-type="standard"
-                          data-size="large"
-                          data-theme="outline"
-                          data-text="signin_with"
-                          data-shape="rectangular"
-                          data-logo_alignment="left">
-                     </div>
-                  </div>
-
                   <!-- form login -->
                   <?= form_open('Login/proseslogin');?>
                      <!-- Username input -->
@@ -127,7 +111,6 @@
       <!-- copyright section end -->
       <!-- Javascript files-->
       <?php $this->load->view('siswa/layout/javascript')?>
-      <script src="https://accounts.google.com/gsi/client" async defer></script>
       <!-- /Javascript files-->
    </body>
 </html>
