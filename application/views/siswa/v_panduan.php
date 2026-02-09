@@ -55,7 +55,7 @@
         <div class="container">
             <div class="row">
                <div class="col-md-12">
-                  <h1 class="projects_taital">Buku Panduan Website</h1>
+                  <h1 class="projects_taital">Buku Panduan Penggunaan</h1>
                </div>
             </div>
          </div>

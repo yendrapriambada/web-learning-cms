@@ -12,9 +12,7 @@
                 <ul class="dropdown-menu pull-right">
                     <li><a href="<?= base_url().'guru/Profil'?>"><i class="material-icons">person</i>Profil</a></li>
                     <li role="separator" class="divider"></li>
-                    <?php if($this->session->userdata('flag_type_account') !== 'google') { ?>
                     <li><a href="<?= base_url().'guru/UbahKataSandi'?>"><i class="material-icons">create</i>Ganti Password</a></li>
-                    <?php } ?>
                     <li role="separator" class="divider"></li>
                     <li><a href="<?= base_url().'Logout'?>"><i class="material-icons">input</i>Log Out</a></li>
                 </ul>

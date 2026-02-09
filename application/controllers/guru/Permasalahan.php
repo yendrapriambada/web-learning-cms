@@ -2,14 +2,6 @@
 defined('BASEPATH') OR exit('No direct script access allowed');
 
 class Permasalahan extends CI_Controller {
-    public $session;
-    public $upload;
-    public $form_validation;
-    public $input;
-    public $db;
-    public $M_permasalahan;
-    public $M_pertemuan;
-    public $load;
 	public function __construct(){
 		parent::__construct();
 
