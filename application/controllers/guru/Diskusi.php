@@ -34,6 +34,7 @@ class Diskusi extends CI_Controller {
 	{
 		$data['dataByPertemuan']=$this->M_diskusi->tampil_view_by_id_pertemuan_sort($idPertemuan);
         $data['pertemuan']=$this->M_pertemuan->tampil_by_id($idPertemuan);
+        $data['users'] = $this->M_user->getRecordsView();
 		$this->load->view('guru/diskusi/v_review_diskusi',$data);
 	}
 
@@ -46,6 +47,7 @@ class Diskusi extends CI_Controller {
 	public function create()
 	{
 		$data['pertemuan'] = $this->M_pertemuan->getRecords();
+        $data['users'] = $this->M_user->getRecordsView();
 		$this->load->view('guru/diskusi/v_create_diskusi',$data);
 	}
 
@@ -55,7 +57,7 @@ class Diskusi extends CI_Controller {
 
             $this->form_validation->set_error_delimiters();
             $data = array(
-					'id_user'	 	  => $this->session->userdata('id_user'),
+					'id_user'	 	  => $this->input->post('id_user'),
                     'id_pertemuan'	  => $this->input->post('id_pertemuan'),
                     'komentar'	      => $this->input->post('komentar'),
 					'created_at' 	  => date('Y-m-d H:i:s')
@@ -81,7 +83,7 @@ class Diskusi extends CI_Controller {
             $idPertemuan = $this->input->post('id_pertemuan');
             $this->form_validation->set_error_delimiters();
             $data = array(
-					'id_user'	 	  => $this->session->userdata('id_user'),
+					'id_user'	 	  => $this->input->post('id_user'),
                     'id_pertemuan'	  => $idPertemuan,
                     'komentar'	      => $this->input->post('komentar'),
 					'created_at' 	  => date('Y-m-d H:i:s')
@@ -115,6 +117,7 @@ class Diskusi extends CI_Controller {
 	{
 		$data['dataById']=$this->M_diskusi->tampil_view_by_id($id);
         $data['pertemuan'] = $this->M_pertemuan->getRecords();
+        $data['users'] = $this->M_user->getRecordsView();
 		$this->load->view('guru/diskusi/v_edit_diskusi',$data);
 	}
 
@@ -124,6 +127,7 @@ class Diskusi extends CI_Controller {
 		if($this->validate() != false){
 			$this->form_validation->set_error_delimiters();
 			$data = array(
+                'id_user'	      => $this->input->post('id_user'),
                 'id_pertemuan'	  => $this->input->post('id_pertemuan'),
                 'komentar'	      => $this->input->post('komentar'),
 				'updated_at'      =>date('Y-m-d H:i:s')
@@ -147,6 +151,7 @@ class Diskusi extends CI_Controller {
 	}
 
 	public function validate(){
+        $this->form_validation->set_rules('id_user','Nama Pemberi Komentar','required');
         $this->form_validation->set_rules('id_pertemuan','ID Pertemuan','required');
         $this->form_validation->set_rules('komentar','Komentar','required');
 		if($this->form_validation->run()){

@@ -82,6 +82,7 @@
                                         <tr>
                                             <th>No</th>
                                             <th>Tema Proyek</th>
+                                            <th>Status</th>
                                             <th>Created_at</th>
                                             <th>Updated_at</th>
                                             <th>Aksi</th>
@@ -92,6 +93,7 @@
                                             <tr>
                                                 <td><?= $no?></td>
                                                 <td><?= $d->tema_proyek?></td>
+                                                <td><?= $d->status?></td>
                                                 <td><?= $d->created_at?></td>
                                                 <td><?= $d->updated_at?></td>
                                                 <td>

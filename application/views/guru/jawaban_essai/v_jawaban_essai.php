@@ -9,8 +9,10 @@
     <!-- CSS -->
     <?php $this->load->view('guru/layout/header')?>
     <!-- END CSS -->
+    <style>
+        .btn-clicked { transform: scale(0.98); box-shadow: inset 0 0 6px rgba(0,0,0,.25); }
+    </style>
 
-</head>
 
 <body class="theme-indigo">
     <!-- Page Loader -->
@@ -75,7 +77,74 @@
                             <!-- <a class="dropdown-item btn btn-primary" href="<?= base_url().'guru/Pengguna/create/'?>" title="Tambah Data Pengguna">
                             <i class="material-icons">person_add</i></a> -->
                             <!-- #END# button create -->
-                            <br><br>
+                            <br>
+                            <div class="row mb-3">
+                                <div class="col-md-2">
+                                    <label>Nama Mahasiswa</label>
+                                    <select id="filterName" class="form-control">
+                                        <option value="">Semua</option>
+                                        <?php 
+                                            $names = array();
+                                            foreach ($jawabanEssai as $JE) { $names[$JE->nama_lengkap] = true; }
+                                            foreach (array_keys($names) as $nm) { echo "<option value=\"{$nm}\">{$nm}</option>"; }
+                                        ?>
+                                    </select>
+                                </div>
+                                <div class="col-md-2">
+                                    <label>No. Kelompok</label>
+                                    <select id="filterKelompok" class="form-control">
+                                        <option value="">Semua</option>
+                                        <?php 
+                                            $kel = array();
+                                            foreach ($jawabanEssai as $JE) { $kel[$JE->no_kelompok] = true; }
+                                            foreach (array_keys($kel) as $k) { echo "<option value=\"{$k}\">{$k}</option>"; }
+                                        ?>
+                                    </select>
+                                </div>
+                                <div class="col-md-2">
+                                    <label>Pertemuan</label>
+                                    <select id="filterPertemuan" class="form-control">
+                                        <option value="">Semua</option>
+                                        <?php 
+                                            $pertemuanSet = array();
+                                            foreach ($jawabanEssai as $JE) { 
+                                                $p = $this->db->get_where('v_permasalahan', ['id_permasalahan' => $JE->id_permasalahan])->row();
+                                                if ($p) { $label = 'Pertemuan Ke-'.$p->no_pertemuan; $pertemuanSet[$label] = true; }
+                                            }
+                                            foreach (array_keys($pertemuanSet) as $pt) { echo "<option value=\"{$pt}\">{$pt}</option>"; }
+                                        ?>
+                                    </select>
+                                </div>
+                                <div class="col-md-3">
+                                    <label>Tahap Pembelajaran</label>
+                                    <select id="filterTahap" class="form-control">
+                                        <option value="">Semua</option>
+                                        <?php 
+                                            $tahapSet = array();
+                                            foreach ($jawabanEssai as $JE) { 
+                                                $p = $this->db->get_where('v_permasalahan', ['id_permasalahan' => $JE->id_permasalahan])->row();
+                                                if ($p) { $tahapSet[$p->tahapan_pembelajaran] = true; }
+                                            }
+                                            foreach (array_keys($tahapSet) as $tp) { echo "<option value=\"{$tp}\">{$tp}</option>"; }
+                                        ?>
+                                    </select>
+                                </div>
+                                <div class="col-md-2">
+                                    <label>Nomor Soal</label>
+                                    <select id="filterNoSoal" class="form-control">
+                                        <option value="">Semua</option>
+                                        <?php 
+                                            $noSet = array();
+                                            foreach ($jawabanEssai as $JE) { $noSet[$JE->no_soal] = true; }
+                                            foreach (array_keys($noSet) as $ns) { echo "<option value=\"{$ns}\">{$ns}</option>"; }
+                                        ?>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="mb-2">
+                                <button id="resetFilters" class="btn btn-default waves-effect">Reset Filter</button>
+                            </div>
+                            <br>
                             <div class="table-responsive">
                                 <table class="table table-bordered table-striped table-hover dataTable js-exportable">
                                     <thead>
@@ -110,8 +179,7 @@
                                                 <td class="text-center align-top">
                                                     <p><?= $JE->jawaban_text?></p>
                                                     <?php if ($JE->jawaban_gambar  != NULL) { ?>
-                                                        <img class="rounded" src="<?= base_url().'assets/jawaban_gambar/'.$JE->jawaban_gambar ?>" width="90%" alt="" srcset="">
-                                                        <?= base_url().'assets/jawaban_gambar/'.$JE->jawaban_gambar ?>
+                                                        <a href="<?= base_url().'assets/jawaban_gambar/'.$JE->jawaban_gambar ?>" target="_blank"><?= base_url().'assets/jawaban_gambar/'.$JE->jawaban_gambar ?></a>
                                                     <?php } ?>
                                                     <?php if ($JE->jawaban_file != NULL) { ?>
                                                         <a href="<?= base_url().'assets/jawaban_file/'.$JE->jawaban_file ?>" class="download-button" target="_blank"><?= base_url().'assets/jawaban_file/'.$JE->jawaban_file ?></a>
@@ -203,6 +271,29 @@
     <!-- Custom Js -->
     <script src="<?= base_url();?>assets_guru/js/admin.js"></script>
     <script src="<?= base_url();?>assets_guru/js/pages/tables/jquery-datatable.js"></script>
+    <script>
+        $(function(){
+            var table = $.fn.DataTable.isDataTable('.js-exportable') 
+                ? $('.js-exportable').DataTable() 
+                : $('.js-exportable').DataTable({pageLength: 10, lengthMenu:[10,25,50,100]});
+            function applyExact(columnIndex, value){
+                var expr = value ? '^'+$.fn.dataTable.util.escapeRegex(value)+'$' : '';
+                table.column(columnIndex).search(expr, true, false).draw();
+            }
+            $('#filterName').on('change', function(){ applyExact(1, this.value); });
+            $('#filterKelompok').on('change', function(){ applyExact(2, this.value); });
+            $('#filterPertemuan').on('change', function(){ applyExact(4, this.value); });
+            $('#filterTahap').on('change', function(){ applyExact(5, this.value); });
+            $('#filterNoSoal').on('change', function(){ applyExact(6, this.value); });
+            $('#resetFilters').on('click', function(){
+                var $btn = $(this);
+                $btn.addClass('btn-clicked');
+                setTimeout(function(){ $btn.removeClass('btn-clicked'); }, 180);
+                $('#filterName, #filterKelompok, #filterPertemuan, #filterTahap, #filterNoSoal').val('');
+                table.columns().search('').draw();
+            });
+        });
+    </script>
 </body>
 
 </html>

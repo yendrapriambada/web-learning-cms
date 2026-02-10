@@ -85,6 +85,21 @@
                                             "<button type='button' class='btn-close' data-bs-dismiss='alert' aria-label='Close'></button>
                                             </div>")?>
 
+                                    <!-- Status -->
+                                    <div class="form-group">
+                                        <div class="form-line">
+                                            <label class="form-label" for="status">Status<span class="text-danger">*</span></label>
+                                            <select class="form-control" id="status" name="status" required>
+                                                <option value="Aktif">Aktif</option>
+                                                <option value="Tidak Aktif">Tidak Aktif</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <?= form_error("status",
+                                            "<div class='alert alert-danger alert-dismissible' role='alert'>", 
+                                            "<button type='button' class='btn-close' data-bs-dismiss='alert' aria-label='Close'></button>
+                                            </div>")?>
+
                                     <!-- Submit button -->
                                     <button class="btn btn-primary waves-effect" type="submit">SUBMIT</button>
                                     <a href="<?= base_url().'guru/TemaProyek'?>" class="btn btn-danger waves-effect" type="submit">BATAL</a>

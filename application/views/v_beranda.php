@@ -41,11 +41,9 @@
                           <div class="banner_taital_main text-center" style="valig">
                              <h1 class="banner_taital" style="font-size: clamp(32px, 6vw, 80px);">Worksheet Pendidikan IPA Terpadu</h1>
                              <p class="banner_text">PENGEMBANGAN PERKULIAHAN IPA TERPADU BERBASIS 6E STEM LEARNING BERBANTUKAN WEB BASED WORKSHEET UNTUK MEMBANGUN LITERASI TEKNOLOGI DAN REKAYASA </p>
-                             <?php if ($this->session->userdata('logged_in')) { ?>
-                                <a href="#" class="btn btn-xl btn-primary" data-toggle="modal" data-target="#deskripsiModal">
-                                   Tentang Worksheet 
-                                </a>
-                            <?php } ?>
+                              <a href="#" class="btn btn-xl btn-primary" data-toggle="modal" data-target="#deskripsiModal">
+                                  Tentang Worksheet 
+                              </a>
                           </div>
                        </div>
                     </div>

@@ -20,8 +20,6 @@
 <!-- JQuery DataTable Css -->
 <link href="<?= base_url();?>assets_guru/plugins/jquery-datatable/skin/bootstrap/css/dataTables.bootstrap.css" rel="stylesheet">
 
-<!-- Bootstrap Select Css -->
-<link href="<?= base_url();?>assets_guru/plugins/bootstrap-select/css/bootstrap-select.css" rel="stylesheet" />
 
 <!-- Custom Css -->
 <link href="<?= base_url();?>assets_guru/css/style.css" rel="stylesheet">

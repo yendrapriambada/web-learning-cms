@@ -83,7 +83,13 @@
                     
                             <div class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
                     
-                                <?php foreach ($temaGrouped as $tema): ?>
+                                <?php foreach ($temaGrouped as $temaId => $tema): ?>
+                                    <?php 
+                                        $temaRow = $this->db->get_where('tb_tema_proyek', ['id_tema_proyek' => $temaId])->row();
+                                        if ($temaRow && isset($temaRow->status) && strtolower($temaRow->status) !== 'aktif') { 
+                                            continue; 
+                                        }
+                                    ?>
                                     <div class="dropdown-submenu">
                                         <a class="dropdown-item dropdown-toggle" href="#">
                                             <?= $tema['tema_proyek']; ?>
@@ -141,7 +147,7 @@
                                 echo " active"; 
                             }
                     ?>
-                    ">Panduan Worksheet</a>
+                    ">Panduan Website</a>
                     </li>
                     
 
