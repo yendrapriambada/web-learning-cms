@@ -132,7 +132,7 @@
                         </li>
                     <?php } ?>
 
-                    < <!-- Panduan -->
+                    
                     <li class="nav-item">
                     <a href="<?= base_url()."siswa/Panduan"?>" class="nav-link-d btn btn-outline-light btn-block mr-3
                     <?php 
@@ -144,17 +144,6 @@
                     ">Panduan Worksheet</a>
                     </li>
                     
-                    <!-- Nilai -->
-                    <li class="nav-item">
-                    <a href="<?= base_url()."siswa/Nilai"?>" class="nav-link-d btn btn-outline-light btn-block mr-3
-                    <?php 
-                        if(strtolower($segment2) == "nilai")
-                            {
-                                echo " active"; 
-                            }
-                    ?>
-                    ">Nilai</a>
-                    </li>
 
                     <!-- Profil -->
                     <li class="nav-item">
