@@ -1386,3 +1386,27 @@ textarea#comment.massage-bt::placeholder {
     background-color: #007bff;
     color: #fff;
 }
+
+.nav-link-d.btn.btn-outline-light {
+    border-color: #ffffff;
+    color: #ffffff;
+    border-width: 2px;
+}
+.nav-link-d.btn.btn-outline-light:hover,
+.nav-link-d.btn.btn-outline-light.active {
+    background-color: #fda417;
+    border-color: #fda417;
+    color: #0d1b3d;
+}
+.nav-link-d.btn.btn-menu-custom {
+    background-color: transparent;
+    border-color: #ffffff;
+    border-width: 2px;
+    color: #ffffff;
+}
+.nav-link-d.btn.btn-menu-custom:hover,
+.nav-link-d.btn.btn-menu-custom.active {
+    background-color: #fda417;
+    border-color: #fda417;
+    color: #0d1b3d;
+}
