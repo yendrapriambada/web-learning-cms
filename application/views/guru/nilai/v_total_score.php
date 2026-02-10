@@ -93,7 +93,7 @@
                                                     <tr>
                                                         <td class="text-center align-top"><?= $no?></td>
                                                         <td class="align-top"><?= $us->nama_lengkap?></td>
-                                                        <td class="align-top"><?= $s->no_kelompok?></td>
+                                                        <td class="align-top"><?= $us->no_kelompok?></td>
                                                         <td class="align-top"><?= $us->jenis_kelamin?></td>
                                                         <td class="align-top"><?= $us->sekolah?></td>
                                                         <td class="text-center align-top"><?= $us->angkatan?></td>

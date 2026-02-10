@@ -75,10 +75,15 @@
                                     <input type="hidden" name="id_diskusi" value="<?= $dataById->id_diskusi?>"">
 
                                     <!-- Nama Pemberi Komentar -->
-                                    <div class="form-group form-float">
+                                    <div class="form-group">
                                         <div class="form-line">
-                                            <input type="url" class="form-control" id="nama" name="nama" value="<?= $dataById->nama_lengkap?>" disabled/>
-                                            <label class="form-label" for="nama">Nama Pemberi Komentar</label>
+                                            <label>Nama Pemberi Komentar <span class="text-danger">*</span></label>
+                                            <select class="form-control" name="id_user" id="id_user" required>
+                                                <option value="<?= $dataById->id_user?>" selected><?= $dataById->nama_lengkap?> (<?= $dataById->role_user?>)</option>
+                                                <?php foreach ($users as $u) { ?>
+                                                    <option value="<?= $u->id_user?>"><?= $u->nama_lengkap?> (<?= $u->role_user?>)</option>
+                                                <?php } ?>
+                                            </select>
                                         </div>
                                     </div>
 
@@ -134,6 +139,9 @@
     <script src="<?= base_url();?>assets_guru/js/pages/forms/editors.js"></script>
     <script src="<?= base_url();?>assets_guru/js/pages/forms/basic-form-elements.js"></script>
     <script src="<?= base_url();?>assets_guru/js/pages/forms/form-validation.js"></script>
+    <script>
+        $(function(){});
+    </script>
 </body>
 
 </html>

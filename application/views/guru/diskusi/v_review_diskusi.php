@@ -122,6 +122,22 @@
                                         <form id="form_advanced_validation" method="POST" action="<?= base_url().'guru/Diskusi/do_create_review'?>">
                                             <input type="hidden" name="id_pertemuan" value="<?= $pertemuan->id_pertemuan?>">
 
+                                            <!-- Nama Pemberi Komentar -->
+                                            <div class="form-group">
+                                                <div class="form-line">
+                                                    <label>Nama Pemberi Komentar <span class="text-danger">*</span></label>
+                                                    <select class="form-control" name="id_user" id="id_user" required>
+                                                        <?php foreach ($users as $u) { ?>
+                                                            <option value="<?= $u->id_user?>"><?= $u->nama_lengkap?> (<?= $u->role_user?>)</option>
+                                                        <?php } ?>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                            <?= form_error("id_user",
+                                                    "<div class='alert alert-danger alert-dismissible' role='alert'>", 
+                                                    "<button type='button' class='btn-close' data-bs-dismiss='alert' aria-label='Close'></button>
+                                                    </div>")?>
+
                                             <!-- Komentar -->
                                             <div class="form-group">
                                                 <div class="form-line">
@@ -156,6 +172,9 @@
     <!-- Custom Js -->
     <script src="<?= base_url();?>assets_guru/js/admin.js"></script>
     <script src="<?= base_url();?>assets_guru/js/pages/tables/jquery-datatable.js"></script>
+    <script>
+        $(function(){});
+    </script>
 
 </body>
 

@@ -34,6 +34,7 @@ class TemaProyek extends CI_Controller {
             $this->form_validation->set_error_delimiters();
             $data = array(
 					'tema_proyek'	 	=> $this->input->post('tema_proyek'),
+                    'status'            => $this->input->post('status'),
 					'created_at' 	    => date('Y-m-d H:i:s')
 			);
             
@@ -53,6 +54,7 @@ class TemaProyek extends CI_Controller {
 
 	public function validate(){
 		$this->form_validation->set_rules('tema_proyek','Tema Proyek','required|max_length[200]');
+        $this->form_validation->set_rules('status','Status','required|in_list[Aktif,Tidak Aktif]');
 		if($this->form_validation->run()){
 			return true;
 		}else{
@@ -95,6 +97,7 @@ class TemaProyek extends CI_Controller {
 			$this->form_validation->set_error_delimiters();
 			$data = array(
 				'tema_proyek'		=>$this->input->post('tema_proyek'),
+                'status'            =>$this->input->post('status'),
 				'updated_at'		=>date('Y-m-d H:i:s')
 			);
 

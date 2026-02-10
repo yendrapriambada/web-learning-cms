@@ -39,8 +39,8 @@ class Login extends CI_Controller {
 		$this->session->set_userdata('logged_in', TRUE);
 
 		switch ($data->id_role_user) {
-			case '1': //Siswa
-						redirect('siswa/PengenalanMataKuliah#web');
+			case '1': 
+						redirect('Beranda');
 						break;
 			case '2': //Guru
 						redirect('guru/Beranda');
