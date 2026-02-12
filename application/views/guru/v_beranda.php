@@ -1,5 +1,7 @@
 ﻿<!DOCTYPE html>
 <html>
+<!-- Beranda Guru -->
+
 
 <head>
     <meta charset="UTF-8">
