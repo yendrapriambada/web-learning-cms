@@ -110,7 +110,7 @@
                                             <th class="text-center">Nomor Soal</th>
                                             <th class="text-center">Nilai</th>
                                             <th class="text-center">Tanggal Pengiriman</th>
-                                            <th class="text-center">Tanggal Pengeditan</th>
+                                            <!-- <th class="text-center">Tanggal Pengeditan</th> -->
                                             <th class="text-center">Lihat Detail</th>
                                         </tr>
                                 </thead>
@@ -125,7 +125,7 @@
                                             <td class="text-center align-top"><?= $JE->no_soal?></td>
                                             <td class="align-top"><?= $JE->nilai?></td>
                                             <td class="align-top"><?= $JE->created_at?></td>
-                                            <td class="align-top"><?= $JE->updated_at?></td>
+                                            <!-- <td class="align-top"><?= $JE->updated_at?></td> -->
                                             <td class="text-center align-top">
                                                 <a href="#"
                                                     id="lookDetail"
