@@ -43,6 +43,7 @@ class JawabanSiswa extends CI_Controller {
 		$id = $this->input->post('id_jawaban_essai');
         $data = array(
             'nilai'	        => $this->input->post('nilai'),
+            'jawaban_text'	=> $this->input->post('jawaban_text'),
             'feedback'	    => $this->input->post('feedback'),
             'updated_at'    =>date('Y-m-d H:i:s')
         );

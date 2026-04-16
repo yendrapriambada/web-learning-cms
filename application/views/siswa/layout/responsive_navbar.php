@@ -60,14 +60,19 @@
                             // Kelompokkan pertemuan per tema
                             $temaGrouped = [];
                             foreach ($pertemuan as $p) {
-                                if ($p->status != '1') continue;
+                                if ($p->status_pertemuan != '1') continue;
                                 $key = $p->id_tema_proyek;
                                 $namaTema = $p->tema_proyek;
+                                $status_pertemuan = $p->status_pertemuan;
+                                $status_tema = $p->status_tema;
                     
                                 if (!isset($temaGrouped[$key])) {
                                     $temaGrouped[$key] = [
-                                        'tema_proyek' => $namaTema,
-                                        'items'       => []
+                                        'tema_proyek'        => $namaTema,
+                                        'id_tema_proyek'     => $key,
+                                        'status_pertemuan'   => $status_pertemuan,
+                                        'status_tema'        => $status_tema,
+                                        'items'              => []
                                     ];
                                 }
                                 $temaGrouped[$key]['items'][] = $p;
@@ -85,24 +90,21 @@
                     
                                 <?php foreach ($temaGrouped as $temaId => $tema): ?>
                                     <?php 
-                                        $temaRow = $this->db->get_where('tb_tema_proyek', ['id_tema_proyek' => $temaId])->row();
-                                        if ($temaRow && isset($temaRow->status) && strtolower($temaRow->status) !== 'aktif') { 
-                                            continue; 
-                                        }
+                                        if ($tema['status_tema'] == 1) { 
                                     ?>
-                                    <div class="dropdown-submenu">
-                                        <a class="dropdown-item dropdown-toggle" href="#">
-                                            <?= $tema['tema_proyek']; ?>
-                                        </a>
-                                        <div class="dropdown-menu">
-                                        <?php foreach ($tema['items'] as $p): ?>
-                                            <a class="dropdown-item" href="<?= base_url('siswa/Pertemuan/worksheet/'.$p->id_pertemuan); ?>">
-                                                <?= $p->judul_pertemuan; ?>
+                                        <div class="dropdown-submenu">
+                                            <a class="dropdown-item dropdown-toggle" href="#">
+                                                <?= $tema['tema_proyek']; ?>
                                             </a>
-                                        <?php endforeach; ?>
+                                            <div class="dropdown-menu">
+                                            <?php foreach ($tema['items'] as $p): ?>
+                                                <a class="dropdown-item" href="<?= base_url('siswa/Pertemuan/worksheet/'.$p->id_pertemuan); ?>">
+                                                    <?= $p->judul_pertemuan; ?>
+                                                </a>
+                                            <?php endforeach; ?>
+                                            </div>
                                         </div>
-                                    </div>
-                                <?php endforeach; ?>
+                                <?php } endforeach; ?>
                     
                             </div>
                         </div>

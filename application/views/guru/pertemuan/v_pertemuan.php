@@ -101,14 +101,14 @@
                                                 <td><?= $d->deskripsi_pertemuan?></td>
                                                 <td>
                                                     <?php 
-                                                        if($d->status == 0) { 
+                                                        if($d->status_pertemuan == 0) { 
                                                             echo "<span class='badge bg-red'>Tidak Aktif</span>";
                                                         } else { 
                                                             echo "<span class='badge bg-green'>Aktif</span>";} 
                                                     ?>
                                                 </td>
-                                                <td><?= $d->created_at?></td>
-                                                <td><?= $d->updated_at?></td>
+                                                <td><?= $d->created_at_pertemuan?></td>
+                                                <td><?= $d->updated_at_pertemuan?></td>
                                                 <td>
                                                     <a class="dropdown-item btn btn-warning" onclick="return confirm ('Apakah Anda Yakin Akan Mengedit Data ini ?')"  href="<?= base_url().'guru/Pertemuan/edit/'. $d->id_pertemuan?>" title="Edit Data Pertemuan">
                                                         <i class="material-icons">edit</i></a>

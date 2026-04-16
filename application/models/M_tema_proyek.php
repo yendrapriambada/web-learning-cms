@@ -29,5 +29,13 @@
 			$data = $this->db->get("tb_tema_proyek")->row();
 			return $data;
 		}
+
+		public function tampil_by_status()
+		{
+			$this->db->select("*");
+			$this->db->where("status",1);
+			$data = $this->db->get("tb_tema_proyek")->row();
+			return $data;
+		}
 	}
 ?>

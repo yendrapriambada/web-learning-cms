@@ -83,9 +83,9 @@
 
                                     <!-- Jawaban Siswa -->
                                     <div class="form-group form-float">
-                                        <label class="form-label mb-3" for="jawaban_siswa">Jawaban Mahasiswa</label><br><br>
+                                        <label class="form-label mb-3" for="jawaban_siswa">Jawaban Mahasiswa <span class="text-danger">*</span></label><br><br>
                                         <?php if($dataById->jawaban_text != NULL) {?>
-                                            <textarea class="form-control" id="exampleFormControlTextarea1" rows="8" disabled style="border: 1px grey solid; padding: 20px"><?= $dataById->jawaban_text?></textarea>
+                                            <textarea name="jawaban_text" class="form-control" id="exampleFormControlTextarea1" rows="8" style="border: 1px grey solid; padding: 20px" required><?= $dataById->jawaban_text?></textarea>
                                         <?php } ?>
 
                                         <?php if($dataById->jawaban_gambar != NULL) {?>

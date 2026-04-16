@@ -92,8 +92,8 @@
                                         <div class="form-line">
                                             <label class="form-label" for="status">Status<span class="text-danger">*</span></label>
                                             <select class="form-control" id="status" name="status" required>
-                                                <option value="Aktif" <?= ($dataById->status=="Aktif"?"selected":"")?>>Aktif</option>
-                                                <option value="Tidak Aktif" <?= ($dataById->status=="Tidak Aktif"?"selected":"")?>>Tidak Aktif</option>
+                                                <option value="1" <?= ($dataById->status=="1"?"selected":"")?>>Aktif</option>
+                                                <option value="0" <?= ($dataById->status=="0"?"selected":"")?>>Tidak Aktif</option>
                                             </select>
                                         </div>
                                     </div>

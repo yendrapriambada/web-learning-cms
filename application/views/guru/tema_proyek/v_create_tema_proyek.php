@@ -90,8 +90,8 @@
                                         <div class="form-line">
                                             <label class="form-label" for="status">Status<span class="text-danger">*</span></label>
                                             <select class="form-control" id="status" name="status" required>
-                                                <option value="Aktif">Aktif</option>
-                                                <option value="Tidak Aktif">Tidak Aktif</option>
+                                                <option value="1">Aktif</option>
+                                                <option value="0">Tidak Aktif</option>
                                             </select>
                                         </div>
                                     </div>
