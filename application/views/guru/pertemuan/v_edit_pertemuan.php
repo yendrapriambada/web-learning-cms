@@ -123,10 +123,10 @@
                                     <div class="form-group">
                                         <label class="m-b-20">Status Pertemuan<span class="text-danger">*</span></label>
                                         <br>
-                                        <input type="radio" class="with-gap" name="status" id="tidak-aktif" value="0" <?php if($dataById->status == "0") { echo "checked";}?> required>
+                                        <input type="radio" class="with-gap" name="status" id="tidak-aktif" value="0" <?php if($dataById->status_pertemuan == "0") { echo "checked";}?> required>
                                         <label for="tidak-aktif">Tidak Aktif</label>
                                         
-                                        <input type="radio" class="with-gap" name="status" id="aktif" value="1" <?php if($dataById->status == "1") { echo "checked";}?> required>
+                                        <input type="radio" class="with-gap" name="status" id="aktif" value="1" <?php if($dataById->status_pertemuan == "1") { echo "checked";}?> required>
                                         <label for="aktif" class="m-l-80">Aktif</label>
                                     </div>
                                     <?= form_error("status",

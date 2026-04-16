@@ -93,7 +93,7 @@
                                             <tr>
                                                 <td><?= $no?></td>
                                                 <td><?= $d->tema_proyek?></td>
-                                                <td><?= $d->status?></td>
+                                                <td><?php if($d->status == 1) {echo "Aktif";}else{echo "Tidak Aktif";}?></td>
                                                 <td><?= $d->created_at?></td>
                                                 <td><?= $d->updated_at?></td>
                                                 <td>
