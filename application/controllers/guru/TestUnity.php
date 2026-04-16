@@ -42,6 +42,7 @@ class TestUnity extends CI_Controller {
 		$id = $this->input->post('id_test_unity');
         $data = array(
             'nilai'	        => $this->input->post('nilai'),
+			'jawaban'		=> $this->input->post('jawaban'),
             'feedback'	    => $this->input->post('feedback')
         );
 

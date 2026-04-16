@@ -84,7 +84,7 @@
                                     <!-- Jawaban -->
                                     <div class="form-group form-float">
                                         <label class="form-label mb-3" for="jawaban">Jawaban Mahasiswa</label><br><br>
-                                        <textarea class="form-control" id="exampleFormControlTextarea1" rows="8" disabled style="border: 1px grey solid; padding: 20px"><?= $dataById->jawaban?></textarea>
+                                        <textarea class="form-control" id="exampleFormControlTextarea1" rows="8" name="jawaban" required style="border: 1px grey solid; padding: 20px"><?= $dataById->jawaban?></textarea>
                                     </div>
 
                                     
