@@ -16,10 +16,13 @@ class Pertemuan extends CI_Controller {
 
 	public function worksheet($id_pertemuan)
 	{
-		$data['pertemuan'] = $this->M_pertemuan->getRecordsView();
-        $data['pertemuanById'] = $this->M_pertemuan->tampil_by_id($id_pertemuan);
-		$data['permasalahan'] = $this->M_permasalahan->tampil_view_by_id_pertemuan($id_pertemuan);
-		$data['soal'] = $this->M_soal_essai->getRecordsViewSrotByNo();
+		$pertemuanById = $this->M_pertemuan->tampil_by_id($id_pertemuan);
+		if (!$pertemuanById) { redirect('siswa/Beranda'); }
+
+		$data['pertemuan']     = $this->M_pertemuan->getRecordsView();
+        $data['pertemuanById'] = $pertemuanById;
+		$data['permasalahan']  = $this->M_permasalahan->tampil_view_by_id_pertemuan($id_pertemuan);
+		$data['soal']          = $this->M_soal_essai->getRecordsViewSrotByNo();
 		$this->load->view('siswa/v_pertemuan', $data);
 	}
 }

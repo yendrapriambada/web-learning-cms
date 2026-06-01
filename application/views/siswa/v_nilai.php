@@ -115,13 +115,11 @@
                                         </tr>
                                 </thead>
                                 <tbody>
-                                        <?php $no=1; foreach ($jawabanEssai as $JE) : 
-                                            $SoalEssaiByPermasalahan = $this->db->get_where('v_permasalahan', ['id_permasalahan' => $JE->id_permasalahan])->row();
-                                        ?>
+                                        <?php $no=1; foreach ($jawabanEssai as $JE) : ?>
                                         <tr>
                                             <td class="text-center align-top"><?= $no?></td>
-                                            <td class="align-top">Pertemuan Ke-<?= $SoalEssaiByPermasalahan->no_pertemuan?></td>
-                                            <td class="align-top"><?= $SoalEssaiByPermasalahan->tahapan_pembelajaran?></td>
+                                            <td class="align-top">Pertemuan Ke-<?= $JE->no_pertemuan?></td>
+                                            <td class="align-top"><?= $JE->tahapan_pembelajaran?></td>
                                             <td class="text-center align-top"><?= $JE->no_soal?></td>
                                             <td class="align-top"><?= $JE->nilai?></td>
                                             <td class="align-top"><?= $JE->created_at?></td>
@@ -153,7 +151,9 @@
                                                     <h4><b>Jawaban</b></h4>
                                                     <p><?= $JE->jawaban_text?></p>
 
+                                                    <?php if ($JE->jawaban_gambar != NULL && $JE->jawaban_gambar != '') { ?>
                                                     <img class="rounded" src="<?= base_url().'assets/jawaban_gambar/'.$JE->jawaban_gambar ?>" width="90%" alt="" srcset="">
+                                                    <?php } ?>
                                                     <?php if ($JE->jawaban_file != NULL) { ?>
                                                         <a href="<?= base_url().'assets/jawaban_file/'.$JE->jawaban_file ?>" class="download-button" download="Jawaban PowerPoint_<?= $this->session->userdata('nama_lengkap')?>.pptx">Download PPT: <?= $JE->jawaban_file?></a>
                                                     <?php } ?>

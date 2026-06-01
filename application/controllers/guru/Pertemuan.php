@@ -86,8 +86,10 @@ class Pertemuan extends CI_Controller {
 
 	public function edit($id)
 	{
-		$data['dataById']=$this->M_pertemuan->tampil_view_by_id($id);
-		$data['temaProyek']=$this->M_tema_proyek->getRecords();
+		$dataById = $this->M_pertemuan->tampil_view_by_id($id);
+		if (!$dataById) { redirect('guru/Pertemuan'); }
+		$data['dataById']    = $dataById;
+		$data['temaProyek']  = $this->M_tema_proyek->getRecords();
 		$this->load->view('guru/pertemuan/v_edit_pertemuan',$data);
 	}
 

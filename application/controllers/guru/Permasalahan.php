@@ -147,12 +147,12 @@ class Permasalahan extends CI_Controller {
                     $this->session->set_flashdata('ver', 'FALSE');
                     $this->session->set_flashdata('class_alert', 'danger');
                     $this->session->set_flashdata('error', $this->upload->display_errors());
-                    redirect('guru/Permasalahan/create');
+                    redirect('guru/Permasalahan/edit/'.$id);
                 } else {
                     $data_upload_files = $this->upload->data();
                     $image = $data_upload_files['file_name'];
                 }
-                
+
                 $data = array(
                     'id_pertemuan'      		=> $this->input->post('id_pertemuan'),
                     'tahapan_pembelajaran'      => $this->input->post('tahapan_pembelajaran'),

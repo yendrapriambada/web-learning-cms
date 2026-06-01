@@ -63,7 +63,7 @@ class SoalEssai extends CI_Controller {
 	public function delete($id)
 	{	
 		$cekData = $this->db->get_where('tb_jawaban_essai', array(//making selection
-			'id_soal' => $id
+			'id_soal' => $id  // FK column in tb_jawaban_essai referencing tb_soal_essai
 		));
 
 		if ($cekData->num_rows() > 0 ) {

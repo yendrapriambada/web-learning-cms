@@ -38,7 +38,11 @@ class Nilai extends CI_Controller {
 	public function rekap_nilai()
 	{
 		$data['score'] = $this->M_score->getRecordsViewTotalScore2();
-		$data['user'] = $this->M_user->getRecordsView();
+		// Index user by id_user for O(1) lookup in view instead of O(n*m) nested loop
+		$userList = $this->M_user->getRecordsView();
+		$userMap = [];
+		foreach ($userList as $u) { $userMap[$u->id_user] = $u; }
+		$data['user'] = $userMap;
 		$this->load->view('guru/nilai/v_total_score', $data);
 	}
 }
