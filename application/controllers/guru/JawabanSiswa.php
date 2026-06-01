@@ -34,7 +34,9 @@ class JawabanSiswa extends CI_Controller {
 
     public function form_edit($id)
 	{
-		$data['dataById']=$this->M_jawaban_essai->tampil_view_by_id($id);
+		$dataById = $this->M_jawaban_essai->tampil_view_by_id($id);
+		if (!$dataById) { redirect('guru/JawabanSiswa'); }
+		$data['dataById'] = $dataById;
 		$this->load->view('guru/jawaban_essai/v_edit_jawaban_essai',$data);
 	}
 

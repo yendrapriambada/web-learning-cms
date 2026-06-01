@@ -87,9 +87,10 @@
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        <?php $no=1; foreach ($score as $s) :
-                                            foreach ($user as $us) :
-                                                if ($us->id_user == $s->id_user) { ?>
+                                        <?php $no=1; foreach ($score as $s):
+                                            $us = isset($user[$s->id_user]) ? $user[$s->id_user] : null;
+                                            if (!$us) { $no++; continue; }
+                                        ?>
                                                     <tr>
                                                         <td class="text-center align-top"><?= $no?></td>
                                                         <td class="align-top"><?= $us->nama_lengkap?></td>
@@ -101,10 +102,7 @@
                                                         <td class="text-center align-top"><?= $s->score_unity?></td>
                                                         <td class="text-center align-top"><?= $s->total_score?></td>
                                                     </tr>
-                                                <?php } ?>
-                                            <?php endforeach;  
-                                        $no++; 
-                                        endforeach; ?>
+                                        <?php $no++; endforeach; ?>
                                     </tbody>
                                 </table>
                             </div>
