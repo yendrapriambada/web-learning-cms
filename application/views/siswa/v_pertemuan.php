@@ -106,8 +106,18 @@
                               <img src="<?= base_url().'assets/soal/'.$p->foto?>" alt="foto soal" srcset="">
                            <?php } ?>
                            <?php if ($p->link_permasalahan != NULL) {?>
-                              <div class="embed-responsive embed-responsive-16by9 mb-3">
-                                 <iframe class="embed-responsive-item" src="<?= $p->link_permasalahan?>" allowfullscreen></iframe>
+                              <div class="embed-wrapper mb-3" id="embedWrapper<?= $p->id_permasalahan?>" style="position:relative; width:100%; min-height:600px;">
+                                 <button
+                                    onclick="toggleFullscreen('embedWrapper<?= $p->id_permasalahan?>', this)"
+                                    style="position:absolute; top:8px; right:8px; z-index:10; background:rgba(0,0,0,0.55); color:#fff; border:none; border-radius:4px; padding:6px 10px; cursor:pointer; font-size:13px;"
+                                    title="Fullscreen">
+                                    <i class="fa fa-expand"></i> Fullscreen
+                                 </button>
+                                 <iframe
+                                    src="<?= $p->link_permasalahan?>"
+                                    allowfullscreen
+                                    style="width:100%; height:100%; min-height:600px; border:none; display:block;">
+                                 </iframe>
                               </div>
                            <?php } ?>
 
@@ -318,5 +328,35 @@
       <!-- copyright section end -->
       <!-- Javascript files-->
       <?php $this->load->view('siswa/layout/javascript')?>
+      <style>
+         .embed-wrapper:-webkit-full-screen { width:100vw; height:100vh; min-height:100vh; }
+         .embed-wrapper:-moz-full-screen    { width:100vw; height:100vh; min-height:100vh; }
+         .embed-wrapper:fullscreen          { width:100vw; height:100vh; min-height:100vh; }
+         .embed-wrapper:fullscreen iframe   { min-height:100vh; }
+      </style>
+      <script>
+         function toggleFullscreen(wrapperId, btn) {
+            var el = document.getElementById(wrapperId);
+            var isFs = document.fullscreenElement || document.webkitFullscreenElement || document.mozFullScreenElement;
+            if (!isFs) {
+               var req = el.requestFullscreen || el.webkitRequestFullscreen || el.mozRequestFullScreen;
+               if (req) req.call(el);
+            } else {
+               var exit = document.exitFullscreen || document.webkitExitFullscreen || document.mozCancelFullScreen;
+               if (exit) exit.call(document);
+            }
+         }
+         document.addEventListener('fullscreenchange', updateFullscreenBtns);
+         document.addEventListener('webkitfullscreenchange', updateFullscreenBtns);
+         document.addEventListener('mozfullscreenchange', updateFullscreenBtns);
+         function updateFullscreenBtns() {
+            var isFs = document.fullscreenElement || document.webkitFullscreenElement || document.mozFullScreenElement;
+            document.querySelectorAll('.embed-wrapper button').forEach(function(btn) {
+               btn.innerHTML = isFs
+                  ? '<i class="fa fa-compress"></i> Exit Fullscreen'
+                  : '<i class="fa fa-expand"></i> Fullscreen';
+            });
+         }
+      </script>
    </body>
 </html>
