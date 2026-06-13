@@ -106,7 +106,7 @@
                               <img src="<?= base_url().'assets/soal/'.$p->foto?>" alt="foto soal" srcset="">
                            <?php } ?>
                            <?php if ($p->link_permasalahan != NULL) {?>
-                              <div class="embed-wrapper mb-3" id="embedWrapper<?= $p->id_permasalahan?>" style="position:relative; width:100%; min-height:600px;">
+                              <div class="embed-wrapper mb-3" id="embedWrapper<?= $p->id_permasalahan?>" style="position:relative; width:100%; height:calc(100vh - 220px);">
                                  <button
                                     onclick="toggleFullscreen('embedWrapper<?= $p->id_permasalahan?>', this)"
                                     style="position:absolute; top:8px; right:8px; z-index:10; background:rgba(0,0,0,0.55); color:#fff; border:none; border-radius:4px; padding:6px 10px; cursor:pointer; font-size:13px;"
@@ -116,7 +116,7 @@
                                  <iframe
                                     src="<?= $p->link_permasalahan?>"
                                     allowfullscreen
-                                    style="width:100%; height:100%; min-height:600px; border:none; display:block;">
+                                    style="width:100%; height:100%; border:none; display:block;">
                                  </iframe>
                               </div>
                            <?php } ?>
@@ -329,10 +329,9 @@
       <!-- Javascript files-->
       <?php $this->load->view('siswa/layout/javascript')?>
       <style>
-         .embed-wrapper:-webkit-full-screen { width:100vw; height:100vh; min-height:100vh; }
-         .embed-wrapper:-moz-full-screen    { width:100vw; height:100vh; min-height:100vh; }
-         .embed-wrapper:fullscreen          { width:100vw; height:100vh; min-height:100vh; }
-         .embed-wrapper:fullscreen iframe   { min-height:100vh; }
+         .embed-wrapper:-webkit-full-screen { width:100vw; height:100vh; }
+         .embed-wrapper:-moz-full-screen    { width:100vw; height:100vh; }
+         .embed-wrapper:fullscreen          { width:100vw; height:100vh; }
       </style>
       <script>
          function toggleFullscreen(wrapperId, btn) {
