@@ -73,79 +73,63 @@
                                 </div>
                             <?php } ?>
                             
-                            <!-- button create -->
-                            <!-- <a class="dropdown-item btn btn-primary" href="<?= base_url().'guru/Pengguna/create/'?>" title="Tambah Data Pengguna">
-                            <i class="material-icons">person_add</i></a> -->
-                            <!-- #END# button create -->
                             <br>
+                            <form method="GET" action="<?= base_url().'guru/JawabanSiswa'?>" id="filterForm">
                             <div class="row mb-3">
                                 <div class="col-md-2">
                                     <label>Nama Mahasiswa</label>
-                                    <select id="filterName" class="form-control">
+                                    <select name="nama_lengkap" class="form-control" onchange="this.form.submit()">
                                         <option value="">Semua</option>
-                                        <?php 
-                                            $names = array();
-                                            foreach ($jawabanEssai as $JE) { $names[$JE->nama_lengkap] = true; }
-                                            foreach (array_keys($names) as $nm) { echo "<option value=\"{$nm}\">{$nm}</option>"; }
-                                        ?>
+                                        <?php foreach ($filter_names as $f): ?>
+                                        <option value="<?= htmlspecialchars($f->nama_lengkap)?>" <?= $filters['nama_lengkap']==$f->nama_lengkap?'selected':''?>><?= htmlspecialchars($f->nama_lengkap)?></option>
+                                        <?php endforeach; ?>
                                     </select>
                                 </div>
                                 <div class="col-md-2">
                                     <label>No. Kelompok</label>
-                                    <select id="filterKelompok" class="form-control">
+                                    <select name="no_kelompok" class="form-control" onchange="this.form.submit()">
                                         <option value="">Semua</option>
-                                        <?php 
-                                            $kel = array();
-                                            foreach ($jawabanEssai as $JE) { $kel[$JE->no_kelompok] = true; }
-                                            foreach (array_keys($kel) as $k) { echo "<option value=\"{$k}\">{$k}</option>"; }
-                                        ?>
+                                        <?php foreach ($filter_kelompok as $f): ?>
+                                        <option value="<?= htmlspecialchars($f->no_kelompok)?>" <?= $filters['no_kelompok']==$f->no_kelompok?'selected':''?>><?= htmlspecialchars($f->no_kelompok)?></option>
+                                        <?php endforeach; ?>
                                     </select>
                                 </div>
                                 <div class="col-md-2">
                                     <label>Pertemuan</label>
-                                    <select id="filterPertemuan" class="form-control">
+                                    <select name="no_pertemuan" class="form-control" onchange="this.form.submit()">
                                         <option value="">Semua</option>
-                                        <?php
-                                            $pertemuanSet = array();
-                                            foreach ($jawabanEssai as $JE) {
-                                                $label = 'Pertemuan Ke-'.$JE->no_pertemuan;
-                                                $pertemuanSet[$label] = true;
-                                            }
-                                            foreach (array_keys($pertemuanSet) as $pt) { echo "<option value=\"{$pt}\">{$pt}</option>"; }
-                                        ?>
+                                        <?php foreach ($filter_pertemuan as $f): ?>
+                                        <option value="<?= $f->no_pertemuan?>" <?= $filters['no_pertemuan']==$f->no_pertemuan?'selected':''?>>Pertemuan Ke-<?= $f->no_pertemuan?></option>
+                                        <?php endforeach; ?>
                                     </select>
                                 </div>
                                 <div class="col-md-3">
                                     <label>Tahap Pembelajaran</label>
-                                    <select id="filterTahap" class="form-control">
+                                    <select name="tahapan_pembelajaran" class="form-control" onchange="this.form.submit()">
                                         <option value="">Semua</option>
-                                        <?php
-                                            $tahapSet = array();
-                                            foreach ($jawabanEssai as $JE) {
-                                                $tahapSet[$JE->tahapan_pembelajaran] = true;
-                                            }
-                                            foreach (array_keys($tahapSet) as $tp) { echo "<option value=\"{$tp}\">{$tp}</option>"; }
-                                        ?>
+                                        <?php foreach ($filter_tahap as $f): ?>
+                                        <option value="<?= htmlspecialchars($f->tahapan_pembelajaran)?>" <?= $filters['tahapan_pembelajaran']==$f->tahapan_pembelajaran?'selected':''?>><?= htmlspecialchars($f->tahapan_pembelajaran)?></option>
+                                        <?php endforeach; ?>
                                     </select>
                                 </div>
                                 <div class="col-md-2">
                                     <label>Nomor Soal</label>
-                                    <select id="filterNoSoal" class="form-control">
+                                    <select name="no_soal" class="form-control" onchange="this.form.submit()">
                                         <option value="">Semua</option>
-                                        <?php 
-                                            $noSet = array();
-                                            foreach ($jawabanEssai as $JE) { $noSet[$JE->no_soal] = true; }
-                                            foreach (array_keys($noSet) as $ns) { echo "<option value=\"{$ns}\">{$ns}</option>"; }
-                                        ?>
+                                        <?php foreach ($filter_soal as $f): ?>
+                                        <option value="<?= $f->no_soal?>" <?= $filters['no_soal']==$f->no_soal?'selected':''?>><?= $f->no_soal?></option>
+                                        <?php endforeach; ?>
                                     </select>
                                 </div>
                             </div>
                             <div class="mb-2">
-                                <button id="resetFilters" class="btn btn-default waves-effect">Reset Filter</button>
+                                <a href="<?= base_url().'guru/JawabanSiswa'?>" class="btn btn-default waves-effect">Reset Filter</a>
+                                <span class="ml-3 text-muted">Menampilkan <?= count($jawabanEssai)?> dari <?= $total?> data</span>
                             </div>
+                            </form>
                             <br>
                             <div class="table-responsive">
-                                <table class="table table-bordered table-striped table-hover dataTable js-exportable">
+                                <table class="table table-bordered table-striped table-hover">
                                     <thead>
                                         <tr>
                                             <th class="text-center">No</th>
@@ -244,24 +228,38 @@
                                     </tbody>
                                 </table>
                             </div>
+
+                            <!-- Pagination -->
+                            <?php if ($total_pages > 1): ?>
+                            <?php
+                                $q = $filters;
+                                $base = base_url().'guru/JawabanSiswa?';
+                            ?>
+                            <nav>
+                                <ul class="pagination">
+                                    <li class="<?= $current_page <= 1 ? 'disabled' : ''?>">
+                                        <a href="<?= $base.http_build_query(array_merge($q, ['page' => $current_page - 1]))?>">&laquo;</a>
+                                    </li>
+                                    <?php for ($i = max(1, $current_page-2); $i <= min($total_pages, $current_page+2); $i++): ?>
+                                    <li class="<?= $i == $current_page ? 'active' : ''?>">
+                                        <a href="<?= $base.http_build_query(array_merge($q, ['page' => $i]))?>"><?= $i?></a>
+                                    </li>
+                                    <?php endfor; ?>
+                                    <li class="<?= $current_page >= $total_pages ? 'disabled' : ''?>">
+                                        <a href="<?= $base.http_build_query(array_merge($q, ['page' => $current_page + 1]))?>">&raquo;</a>
+                                    </li>
+                                </ul>
+                            </nav>
+                            <?php endif; ?>
+                            <!-- END Pagination -->
+
                         </div>
                     </div>
                 </div>
             </div>
-            <!-- #END# Exportable Table -->
+            <!-- #END# Table -->
         </div>
     </section>
-
-    <script type="text/javascript" charset="utf-8">
-        $(document).ready(function() {
-            $(document).on('click','#lookDetail', function () {
-                var nama_lengkap = $(this).data('nama_lengkap');
-                var username = $(this).data('username');
-                $('#nama_lengkap').text(nama_lengkap);
-                $("#username").text(username);
-            })
-        });
-	</script>
 
     <!-- JS -->
     <?php $this->load->view('guru/layout/javascript')?>
@@ -269,30 +267,6 @@
 
     <!-- Custom Js -->
     <script src="<?= base_url();?>assets_guru/js/admin.js"></script>
-    <script src="<?= base_url();?>assets_guru/js/pages/tables/jquery-datatable.js"></script>
-    <script>
-        $(function(){
-            var table = $.fn.DataTable.isDataTable('.js-exportable') 
-                ? $('.js-exportable').DataTable() 
-                : $('.js-exportable').DataTable({pageLength: 10, lengthMenu:[10,25,50,100]});
-            function applyExact(columnIndex, value){
-                var expr = value ? '^'+$.fn.dataTable.util.escapeRegex(value)+'$' : '';
-                table.column(columnIndex).search(expr, true, false).draw();
-            }
-            $('#filterName').on('change', function(){ applyExact(1, this.value); });
-            $('#filterKelompok').on('change', function(){ applyExact(2, this.value); });
-            $('#filterPertemuan').on('change', function(){ applyExact(4, this.value); });
-            $('#filterTahap').on('change', function(){ applyExact(5, this.value); });
-            $('#filterNoSoal').on('change', function(){ applyExact(6, this.value); });
-            $('#resetFilters').on('click', function(){
-                var $btn = $(this);
-                $btn.addClass('btn-clicked');
-                setTimeout(function(){ $btn.removeClass('btn-clicked'); }, 180);
-                $('#filterName, #filterKelompok, #filterPertemuan, #filterTahap, #filterNoSoal').val('');
-                table.columns().search('').draw();
-            });
-        });
-    </script>
 </body>
 
 </html>

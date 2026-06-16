@@ -56,7 +56,7 @@ class SumberBelajar extends CI_Controller {
 			// --- UPLOAD PDF SUMBER BELAJAR (WAJIB) ---
 			$config_pdf['upload_path']   = FCPATH.'assets/sumber_belajar/pdf/';
 			$config_pdf['allowed_types'] = 'pdf';
-			$config_pdf['max_size']      = 5120; // KB
+			$config_pdf['max_size']      = 2048; // KB
 			$config_pdf['file_name']     = 'pdf_'.time().'_'.rand(1000,9999);
 
 			$this->upload->initialize($config_pdf);
@@ -175,7 +175,7 @@ class SumberBelajar extends CI_Controller {
 			if (!empty($_FILES['pdf_sumber_belajar']['name'])) {
 				$config_pdf['upload_path']   = FCPATH.'assets/sumber_belajar/pdf/';
 				$config_pdf['allowed_types'] = 'pdf';
-				$config_pdf['max_size']      = 5120;
+				$config_pdf['max_size']      = 2048;
 				$config_pdf['file_name']     = 'pdf_'.time().'_'.rand(1000,9999);
 
 				$this->upload->initialize($config_pdf);

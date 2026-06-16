@@ -18,7 +18,32 @@ class JawabanSiswa extends CI_Controller {
 
 	public function index()
 	{
-		$data['jawabanEssai'] = $this->M_jawaban_essai->getRecordsView();
+		$per_page = 20;
+		$page     = max(1, (int) $this->input->get('page'));
+		$offset   = ($page - 1) * $per_page;
+
+		$filters = array(
+			'nama_lengkap'          => $this->input->get('nama_lengkap'),
+			'no_kelompok'           => $this->input->get('no_kelompok'),
+			'no_pertemuan'          => $this->input->get('no_pertemuan'),
+			'tahapan_pembelajaran'  => $this->input->get('tahapan_pembelajaran'),
+			'no_soal'               => $this->input->get('no_soal'),
+		);
+
+		$total = $this->M_jawaban_essai->getRecordsCount($filters);
+		$data['jawabanEssai']  = $this->M_jawaban_essai->getRecordsPaginated($per_page, $offset, $filters);
+		$data['filters']       = $filters;
+		$data['total']         = $total;
+		$data['per_page']      = $per_page;
+		$data['current_page']  = $page;
+		$data['total_pages']   = ceil($total / $per_page);
+
+		$data['filter_names']   = $this->M_jawaban_essai->getDistinctValues('nama_lengkap');
+		$data['filter_kelompok']= $this->M_jawaban_essai->getDistinctValues('no_kelompok');
+		$data['filter_pertemuan']= $this->M_jawaban_essai->getDistinctValues('no_pertemuan');
+		$data['filter_tahap']   = $this->M_jawaban_essai->getDistinctValues('tahapan_pembelajaran');
+		$data['filter_soal']    = $this->M_jawaban_essai->getDistinctValues('no_soal');
+
 		$this->load->view('guru/jawaban_essai/v_jawaban_essai', $data);
 	}
 
