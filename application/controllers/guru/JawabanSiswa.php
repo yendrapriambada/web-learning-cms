@@ -16,6 +16,42 @@ class JawabanSiswa extends CI_Controller {
         $this->load->model("M_jawaban_essai","", TRUE);
 	}
 
+	public function bulk_edit($no_kelompok = NULL)
+	{
+		if (!$no_kelompok) { redirect('guru/JawabanSiswa'); }
+		$data['no_kelompok'] = $no_kelompok;
+		$data['members']     = $this->M_jawaban_essai->getMembersByKelompok($no_kelompok);
+		$data['soalList']    = $this->M_jawaban_essai->getByKelompokGroupedBySoal($no_kelompok);
+		if (empty($data['soalList'])) {
+			$this->session->set_flashdata('ver', 'FALSE');
+			$this->session->set_flashdata('class_alert', 'warning');
+			$this->session->set_flashdata('alert', 'Kelompok '.$no_kelompok.' belum memiliki data jawaban.');
+			redirect('guru/JawabanSiswa');
+		}
+		$this->load->view('guru/jawaban_essai/v_bulk_edit_jawaban_essai', $data);
+	}
+
+	public function do_bulk_edit()
+	{
+		$no_kelompok = $this->input->post('no_kelompok');
+		$id_soal_arr = $this->input->post('id_soal');
+		$nilai_arr   = $this->input->post('nilai');
+		$feedback_arr= $this->input->post('feedback');
+
+		if (!$no_kelompok || empty($id_soal_arr)) { redirect('guru/JawabanSiswa'); }
+
+		foreach ($id_soal_arr as $i => $id_soal) {
+			$nilai    = isset($nilai_arr[$i])    ? $nilai_arr[$i]    : NULL;
+			$feedback = isset($feedback_arr[$i]) ? $feedback_arr[$i] : NULL;
+			$this->M_jawaban_essai->updateBulkByKelompokAndSoal($no_kelompok, $id_soal, $nilai, $feedback);
+		}
+
+		$this->session->set_flashdata('ver', 'FALSE');
+		$this->session->set_flashdata('class_alert', 'success');
+		$this->session->set_flashdata('alert', 'Nilai kelompok '.$no_kelompok.' berhasil diperbarui.');
+		redirect('guru/JawabanSiswa');
+	}
+
 	public function index()
 	{
 		$per_page = 20;
@@ -43,6 +79,7 @@ class JawabanSiswa extends CI_Controller {
 		$data['filter_pertemuan']= $this->M_jawaban_essai->getDistinctValues('no_pertemuan');
 		$data['filter_tahap']   = $this->M_jawaban_essai->getDistinctValues('tahapan_pembelajaran');
 		$data['filter_soal']    = $this->M_jawaban_essai->getDistinctValues('no_soal');
+		$data['kelompok_list']  = $this->M_jawaban_essai->getKelompokList();
 
 		$this->load->view('guru/jawaban_essai/v_jawaban_essai', $data);
 	}
