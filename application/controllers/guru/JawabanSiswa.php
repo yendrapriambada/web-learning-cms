@@ -40,10 +40,12 @@ class JawabanSiswa extends CI_Controller {
 
 		if (!$no_kelompok || empty($id_soal_arr)) { redirect('guru/JawabanSiswa'); }
 
+		$jawaban_arr = $this->input->post('jawaban_text');
 		foreach ($id_soal_arr as $i => $id_soal) {
-			$nilai    = isset($nilai_arr[$i])    ? $nilai_arr[$i]    : NULL;
-			$feedback = isset($feedback_arr[$i]) ? $feedback_arr[$i] : NULL;
-			$this->M_jawaban_essai->updateBulkByKelompokAndSoal($no_kelompok, $id_soal, $nilai, $feedback);
+			$nilai        = isset($nilai_arr[$i])    ? $nilai_arr[$i]    : NULL;
+			$feedback     = isset($feedback_arr[$i]) ? $feedback_arr[$i] : NULL;
+			$jawaban_text = isset($jawaban_arr[$i])  ? $jawaban_arr[$i]  : NULL;
+			$this->M_jawaban_essai->updateBulkByKelompokAndSoal($no_kelompok, $id_soal, $nilai, $feedback, $jawaban_text);
 		}
 
 		$this->session->set_flashdata('ver', 'FALSE');

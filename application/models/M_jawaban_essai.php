@@ -59,17 +59,19 @@
 			return $this->db->get('tb_user')->result();
 		}
 
-		public function updateBulkByKelompokAndSoal($no_kelompok, $id_soal, $nilai, $feedback) {
+		public function updateBulkByKelompokAndSoal($no_kelompok, $id_soal, $nilai, $feedback, $jawaban_text = NULL) {
 			$members = $this->getMembersByKelompok($no_kelompok);
 			if (empty($members)) return;
 			$ids = array_map(function($m) { return $m->id_user; }, $members);
-			$this->db->where_in('id_user', $ids);
-			$this->db->where('id_soal', $id_soal);
-			$this->db->update('tb_jawaban_essai', [
+			$data = [
 				'nilai'      => $nilai,
 				'feedback'   => $feedback,
 				'updated_at' => date('Y-m-d H:i:s'),
-			]);
+			];
+			if ($jawaban_text !== NULL) $data['jawaban_text'] = $jawaban_text;
+			$this->db->where_in('id_user', $ids);
+			$this->db->where('id_soal', $id_soal);
+			$this->db->update('tb_jawaban_essai', $data);
 		}
 
 		private function _applyFilters($filters) {
