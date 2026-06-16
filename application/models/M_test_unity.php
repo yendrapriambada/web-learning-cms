@@ -34,5 +34,33 @@
 			$data = $this->db->get("v_test_unity")->row();
 			return $data;
 		}
+
+		public function getKelompokList() {
+			$this->db->select('u.no_kelompok');
+			$this->db->distinct();
+			$this->db->from('tb_test_unity tu');
+			$this->db->join('tb_user u', 'tu.id_user = u.id_user');
+			$this->db->where('u.no_kelompok IS NOT NULL');
+			$this->db->order_by('u.no_kelompok', 'ASC');
+			return $this->db->get()->result();
+		}
+
+		public function getByKelompok($no_kelompok) {
+			$this->db->select('tu.id_test_unity, tu.id_user, tu.indikator_soal, tu.practice, tu.pertanyaan, tu.jawaban, tu.nilai, tu.feedback, u.nama_lengkap, u.no_kelompok');
+			$this->db->from('tb_test_unity tu');
+			$this->db->join('tb_user u', 'tu.id_user = u.id_user');
+			$this->db->where('u.no_kelompok', $no_kelompok);
+			$this->db->order_by('tu.practice, tu.pertanyaan', 'ASC');
+			return $this->db->get()->result();
+		}
+
+		public function updateBulkByIds($ids, $nilai, $feedback) {
+			if (empty($ids)) return;
+			$this->db->where_in('id_test_unity', $ids);
+			$this->db->update('tb_test_unity', [
+				'nilai'    => $nilai,
+				'feedback' => $feedback,
+			]);
+		}
 	}
 ?>

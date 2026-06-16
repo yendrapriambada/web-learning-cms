@@ -29,6 +29,49 @@
 			return $this->db->get('v_jawaban_essai')->result();
 		}
 
+		public function getKelompokList() {
+			$this->db->select('u.no_kelompok');
+			$this->db->distinct();
+			$this->db->from('tb_jawaban_essai je');
+			$this->db->join('tb_user u', 'je.id_user = u.id_user');
+			$this->db->where('u.no_kelompok IS NOT NULL');
+			$this->db->order_by('u.no_kelompok', 'ASC');
+			return $this->db->get()->result();
+		}
+
+		public function getByKelompokGroupedBySoal($no_kelompok) {
+			$this->db->select('je.id_soal, je.jawaban_text, je.jawaban_gambar, je.jawaban_file, je.nilai, je.feedback, se.no_soal, se.deksripsi_soal, pm.tahapan_pembelajaran, pm.judul_permasalahan, pt.no_pertemuan, pt.judul_pertemuan');
+			$this->db->from('tb_jawaban_essai je');
+			$this->db->join('tb_user u', 'je.id_user = u.id_user');
+			$this->db->join('tb_soal_essai se', 'je.id_soal = se.id_soal_essai');
+			$this->db->join('tb_permasalahan pm', 'se.id_permasalahan = pm.id_permasalahan');
+			$this->db->join('tb_pertemuan pt', 'pm.id_pertemuan = pt.id_pertemuan');
+			$this->db->where('u.no_kelompok', $no_kelompok);
+			$this->db->group_by('je.id_soal');
+			$this->db->order_by('pt.no_pertemuan, pm.tahapan_pembelajaran, se.no_soal', 'ASC');
+			return $this->db->get()->result();
+		}
+
+		public function getMembersByKelompok($no_kelompok) {
+			$this->db->select('id_user, nama_lengkap');
+			$this->db->where('no_kelompok', $no_kelompok);
+			$this->db->where('id_role_user', 1);
+			return $this->db->get('tb_user')->result();
+		}
+
+		public function updateBulkByKelompokAndSoal($no_kelompok, $id_soal, $nilai, $feedback) {
+			$members = $this->getMembersByKelompok($no_kelompok);
+			if (empty($members)) return;
+			$ids = array_map(function($m) { return $m->id_user; }, $members);
+			$this->db->where_in('id_user', $ids);
+			$this->db->where('id_soal', $id_soal);
+			$this->db->update('tb_jawaban_essai', [
+				'nilai'      => $nilai,
+				'feedback'   => $feedback,
+				'updated_at' => date('Y-m-d H:i:s'),
+			]);
+		}
+
 		private function _applyFilters($filters) {
 			if (!empty($filters['nama_lengkap']))       $this->db->where('nama_lengkap', $filters['nama_lengkap']);
 			if (!empty($filters['no_kelompok']))        $this->db->where('no_kelompok', $filters['no_kelompok']);

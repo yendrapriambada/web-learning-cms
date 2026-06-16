@@ -73,6 +73,23 @@
                                 </div>
                             <?php } ?>
                             
+                            <!-- Bulk Edit by Kelompok -->
+                            <div class="row mb-3" style="background:#e8f5e9; border-radius:6px; padding:12px 16px; margin:0 0 16px 0;">
+                                <div class="col-md-12 mb-1"><b><i class="material-icons" style="vertical-align:middle;font-size:18px;">group</i> Bulk Edit Nilai per Kelompok</b> <small class="text-muted">— input nilai sekali, berlaku untuk semua anggota</small></div>
+                                <div class="col-md-4">
+                                    <select id="kelompokBulk" class="form-control">
+                                        <option value="">-- Pilih No. Kelompok --</option>
+                                        <?php foreach ($kelompok_list as $k): ?>
+                                        <option value="<?= htmlspecialchars($k->no_kelompok)?>"><?= htmlspecialchars($k->no_kelompok)?></option>
+                                        <?php endforeach; ?>
+                                    </select>
+                                </div>
+                                <div class="col-md-2">
+                                    <button type="button" class="btn btn-success waves-effect" onclick="goToBulkEdit()">
+                                        <i class="material-icons">edit</i> Bulk Edit
+                                    </button>
+                                </div>
+                            </div>
                             <br>
                             <form method="GET" action="<?= base_url().'guru/JawabanSiswa'?>" id="filterForm">
                             <div class="row mb-3">
@@ -263,10 +280,14 @@
 
     <!-- JS -->
     <?php $this->load->view('guru/layout/javascript')?>
-    <!-- JS -->
-
-    <!-- Custom Js -->
     <script src="<?= base_url();?>assets_guru/js/admin.js"></script>
+    <script>
+        function goToBulkEdit() {
+            var k = document.getElementById('kelompokBulk').value;
+            if (!k) { alert('Pilih nomor kelompok terlebih dahulu'); return; }
+            window.location.href = '<?= base_url().'guru/JawabanSiswa/bulk_edit/'?>' + encodeURIComponent(k);
+        }
+    </script>
 </body>
 
 </html>
