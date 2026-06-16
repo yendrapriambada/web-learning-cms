@@ -88,7 +88,7 @@ class KoreksiWorksheet extends CI_Controller {
                 // Cek File
                 $config_ppt['upload_path']          = './assets/jawaban_file/';
                 $config_ppt['allowed_types']        = 'ppt|pptx|pdf|docx|doc'; 
-                $config_ppt['max_size']             = 10240;
+                $config_ppt['max_size']             = 2048;
                 $config_ppt['encrypt_name']         = TRUE; // Untuk menghindari duplikasi nama file
                 
                 if (!empty($_FILES[$jawabanFile]['name'])) {

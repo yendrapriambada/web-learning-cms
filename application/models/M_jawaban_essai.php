@@ -11,6 +11,32 @@
 			return $query->result();
 		}
 
+		public function getRecordsPaginated($limit, $offset, $filters = array()) {
+			$this->_applyFilters($filters);
+			$this->db->limit($limit, $offset);
+			return $this->db->get('v_jawaban_essai')->result();
+		}
+
+		public function getRecordsCount($filters = array()) {
+			$this->_applyFilters($filters);
+			return $this->db->count_all_results('v_jawaban_essai');
+		}
+
+		public function getDistinctValues($column) {
+			$this->db->select($column);
+			$this->db->distinct();
+			$this->db->order_by($column, 'ASC');
+			return $this->db->get('v_jawaban_essai')->result();
+		}
+
+		private function _applyFilters($filters) {
+			if (!empty($filters['nama_lengkap']))       $this->db->where('nama_lengkap', $filters['nama_lengkap']);
+			if (!empty($filters['no_kelompok']))        $this->db->where('no_kelompok', $filters['no_kelompok']);
+			if (!empty($filters['no_pertemuan']))       $this->db->where('no_pertemuan', $filters['no_pertemuan']);
+			if (!empty($filters['tahapan_pembelajaran'])) $this->db->where('tahapan_pembelajaran', $filters['tahapan_pembelajaran']);
+			if (!empty($filters['no_soal']))            $this->db->where('no_soal', $filters['no_soal']);
+		}
+
 		public function tambahdata($data){
 			$tambah = $this->db->insert('tb_jawaban_essai',$data);
 			return $tambah;
