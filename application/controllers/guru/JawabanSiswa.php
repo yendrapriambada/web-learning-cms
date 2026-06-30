@@ -114,6 +114,56 @@ class JawabanSiswa extends CI_Controller {
             'updated_at'    =>date('Y-m-d H:i:s')
         );
 
+        $existing = $this->M_jawaban_essai->tampil_by_id($id);
+
+        // Upload ulang gambar jika ada file baru
+        if (!empty($_FILES['jawaban_gambar']['name'])) {
+            $config_image['upload_path']   = './assets/jawaban_gambar/';
+            $config_image['allowed_types'] = 'jpeg|jpg|png';
+            $config_image['max_size']      = 2048;
+            $config_image['encrypt_name']  = TRUE;
+
+            $this->load->library('upload', $config_image);
+            $this->upload->initialize($config_image);
+
+            if ($this->upload->do_upload('jawaban_gambar')) {
+                $upload_data = $this->upload->data();
+                $data['jawaban_gambar'] = $upload_data['file_name'];
+                if ($existing && $existing->jawaban_gambar && file_exists('./assets/jawaban_gambar/'.$existing->jawaban_gambar)) {
+                    unlink('./assets/jawaban_gambar/'.$existing->jawaban_gambar);
+                }
+            } else {
+                $this->session->set_flashdata('ver', 'FALSE');
+                $this->session->set_flashdata('class_alert', 'danger');
+                $this->session->set_flashdata('error', 'Error upload gambar: '.$this->upload->display_errors());
+                redirect('guru/JawabanSiswa/form_edit/'.$id);
+            }
+        }
+
+        // Upload ulang file jika ada file baru
+        if (!empty($_FILES['jawaban_file']['name'])) {
+            $config_file['upload_path']   = './assets/jawaban_file/';
+            $config_file['allowed_types'] = 'ppt|pptx|pdf|docx|doc';
+            $config_file['max_size']      = 2048;
+            $config_file['encrypt_name']  = TRUE;
+
+            $this->load->library('upload', $config_file);
+            $this->upload->initialize($config_file);
+
+            if ($this->upload->do_upload('jawaban_file')) {
+                $upload_data = $this->upload->data();
+                $data['jawaban_file'] = $upload_data['file_name'];
+                if ($existing && $existing->jawaban_file && file_exists('./assets/jawaban_file/'.$existing->jawaban_file)) {
+                    unlink('./assets/jawaban_file/'.$existing->jawaban_file);
+                }
+            } else {
+                $this->session->set_flashdata('ver', 'FALSE');
+                $this->session->set_flashdata('class_alert', 'danger');
+                $this->session->set_flashdata('error', 'Error upload file: '.$this->upload->display_errors());
+                redirect('guru/JawabanSiswa/form_edit/'.$id);
+            }
+        }
+
         $this->M_jawaban_essai->update($id, $data);
         $this->session->set_flashdata('ver', 'FALSE');
         $this->session->set_flashdata('class_alert', 'info');

@@ -71,7 +71,7 @@
                             (<span class="text-danger">*</span>) : formulir isian wajib di isi.
                             <br><br><br>
                             <div class="mt-3">
-                                <form id="form_advanced_validation" method="POST" action="<?= base_url().'guru/JawabanSiswa/do_edit'?>">
+                                <form id="form_advanced_validation" method="POST" action="<?= base_url().'guru/JawabanSiswa/do_edit'?>" enctype="multipart/form-data">
                                     <!-- Id Jawaban Essai-->
                                     <input type="hidden" name="id_jawaban_essai" value="<?= $dataById->id_jawaban_essai?>">
 
@@ -84,22 +84,35 @@
                                     <!-- Jawaban Siswa -->
                                     <div class="form-group form-float">
                                         <label class="form-label mb-3" for="jawaban_siswa">Jawaban Mahasiswa <span class="text-danger">*</span></label><br><br>
-                                        <?php if($dataById->jawaban_text != NULL) {?>
-                                            <textarea name="jawaban_text" class="form-control" id="exampleFormControlTextarea1" rows="8" style="border: 1px grey solid; padding: 20px" required><?= $dataById->jawaban_text?></textarea>
-                                        <?php } ?>
-
-                                        <?php if($dataById->jawaban_gambar != NULL) {?>
-                                            <img class="rounded" src="<?= base_url().'assets/jawaban_gambar/'.$dataById->jawaban_gambar ?>" width="90%" alt="" srcset="">
-                                        <?php } ?>
-
-                                        <?php if($dataById->jawaban_file != NULL) {?>
-                                            <a href="<?= base_url().'assets/jawaban_file/'.$dataById->jawaban_file ?>" class="download-button" target="_blank">Lihat Dokumen: <?= $dataById->jawaban_file ?></a>
-                                            <br><br>
-                                            <a href="<?= base_url().'assets/jawaban_file/'.$dataById->jawaban_file ?>" class="download-button" download="<?= $dataById->jawaban_file?>">Download File: <?= $dataById->jawaban_file?></a>
-                                        <?php } ?>
+                                        <textarea name="jawaban_text" class="form-control" id="exampleFormControlTextarea1" rows="8" style="border: 1px grey solid; padding: 20px"><?= $dataById->jawaban_text?></textarea>
                                     </div>
 
-                                    
+                                    <!-- Jawaban Gambar -->
+                                    <div class="form-group form-float">
+                                        <label class="form-label mb-2" for="jawaban_gambar">Jawaban Gambar (Canvas)</label><br>
+                                        <?php if($dataById->jawaban_gambar != NULL) {?>
+                                            <div class="mb-2">
+                                                <img class="rounded" src="<?= base_url().'assets/jawaban_gambar/'.$dataById->jawaban_gambar ?>" width="50%" alt="" srcset="">
+                                            </div>
+                                        <?php } ?>
+                                        <input type="file" class="form-control-file" name="jawaban_gambar" accept=".jpg,.jpeg,.png">
+                                        <small class="text-muted">Kosongkan jika tidak ingin mengganti gambar. Maks 2MB (JPG/PNG).</small>
+                                    </div>
+
+                                    <!-- Jawaban File -->
+                                    <div class="form-group form-float">
+                                        <label class="form-label mb-2" for="jawaban_file">Jawaban File (PPT/PDF/DOC)</label><br>
+                                        <?php if($dataById->jawaban_file != NULL) {?>
+                                            <div class="mb-2">
+                                                <a href="<?= base_url().'assets/jawaban_file/'.$dataById->jawaban_file ?>" class="download-button" target="_blank">Lihat Dokumen: <?= $dataById->jawaban_file ?></a>
+                                                <br>
+                                                <a href="<?= base_url().'assets/jawaban_file/'.$dataById->jawaban_file ?>" class="download-button" download="<?= $dataById->jawaban_file?>">Download File: <?= $dataById->jawaban_file?></a>
+                                            </div>
+                                        <?php } ?>
+                                        <input type="file" class="form-control-file" name="jawaban_file" accept=".ppt,.pptx,.pdf,.docx,.doc">
+                                        <small class="text-muted">Kosongkan jika tidak ingin mengganti file. Maks 2MB (PPT/PPTX/PDF/DOCX/DOC).</small>
+                                    </div>
+
                                     <!-- Nilai -->
                                     <div class="form-group form-float">
                                         <div class="form-line">

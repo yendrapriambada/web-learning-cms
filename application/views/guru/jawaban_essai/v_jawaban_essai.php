@@ -146,7 +146,7 @@
                             </form>
                             <br>
                             <div class="table-responsive">
-                                <table class="table table-bordered table-striped table-hover">
+                                <table class="table table-bordered table-striped table-hover" id="jawabanTable">
                                     <thead>
                                         <tr>
                                             <th class="text-center">No</th>
@@ -287,6 +287,16 @@
             if (!k) { alert('Pilih nomor kelompok terlebih dahulu'); return; }
             window.location.href = '<?= base_url().'guru/JawabanSiswa/bulk_edit/'?>' + encodeURIComponent(k);
         }
+        $(function () {
+            $('#jawabanTable').DataTable({
+                dom: 'Bt',
+                paging: false,
+                searching: false,
+                info: false,
+                ordering: false,
+                buttons: ['copy', 'csv', 'excel', 'pdf', 'print']
+            });
+        });
     </script>
 </body>
 
