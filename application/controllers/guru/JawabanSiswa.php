@@ -161,6 +161,8 @@ class JawabanSiswa extends CI_Controller {
             'updated_at'    =>date('Y-m-d H:i:s')
         );
 
+        $existing = $this->M_jawaban_essai->tampil_by_id($id);
+
         // Upload ulang gambar jika ada file baru
         if (!empty($_FILES['jawaban_gambar']['name'])) {
             $config_image['upload_path']   = './assets/jawaban_gambar/';
@@ -174,8 +176,9 @@ class JawabanSiswa extends CI_Controller {
             if ($this->upload->do_upload('jawaban_gambar')) {
                 $upload_data = $this->upload->data();
                 $data['jawaban_gambar'] = $upload_data['file_name'];
-                // Catatan: file lama TIDAK dihapus dari disk karena nama file yang sama
-                // bisa saja masih dirujuk oleh baris lain (data lama/duplikat).
+                if ($existing && $existing->jawaban_gambar && file_exists('./assets/jawaban_gambar/'.$existing->jawaban_gambar)) {
+                    unlink('./assets/jawaban_gambar/'.$existing->jawaban_gambar);
+                }
             } else {
                 $this->session->set_flashdata('ver', 'FALSE');
                 $this->session->set_flashdata('class_alert', 'danger');
@@ -197,8 +200,9 @@ class JawabanSiswa extends CI_Controller {
             if ($this->upload->do_upload('jawaban_file')) {
                 $upload_data = $this->upload->data();
                 $data['jawaban_file'] = $upload_data['file_name'];
-                // Catatan: file lama TIDAK dihapus dari disk karena nama file yang sama
-                // bisa saja masih dirujuk oleh baris lain (data lama/duplikat).
+                if ($existing && $existing->jawaban_file && file_exists('./assets/jawaban_file/'.$existing->jawaban_file)) {
+                    unlink('./assets/jawaban_file/'.$existing->jawaban_file);
+                }
             } else {
                 $this->session->set_flashdata('ver', 'FALSE');
                 $this->session->set_flashdata('class_alert', 'danger');
