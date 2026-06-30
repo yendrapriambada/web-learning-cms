@@ -86,7 +86,7 @@
             </div>
 
             <!-- Form bulk edit -->
-            <form method="POST" action="<?= base_url().'guru/JawabanSiswa/do_bulk_edit'?>">
+            <form method="POST" action="<?= base_url().'guru/JawabanSiswa/do_bulk_edit'?>" enctype="multipart/form-data">
                 <input type="hidden" name="no_kelompok" value="<?= htmlspecialchars($no_kelompok)?>">
 
                 <?php
@@ -120,17 +120,30 @@
 
                                         <p class="mb-2"><b>Soal <?= $s->no_soal?>.</b> <?= htmlspecialchars($s->deksripsi_soal)?></p>
 
-                                        <?php if ($s->jawaban_gambar): ?>
-                                        <img src="<?= base_url().'assets/jawaban_gambar/'.$s->jawaban_gambar?>" style="max-width:300px; border-radius:4px; margin-bottom:10px; display:block;" alt="">
-                                        <?php endif; ?>
-                                        <?php if ($s->jawaban_file): ?>
-                                        <p class="mb-2"><a href="<?= base_url().'assets/jawaban_file/'.$s->jawaban_file?>" target="_blank">Lihat Dokumen: <?= htmlspecialchars($s->jawaban_file)?></a></p>
-                                        <?php endif; ?>
-
                                         <!-- Jawaban (editable) -->
                                         <div class="form-group mb-3">
                                             <div class="section-label">Jawaban Kelompok</div>
                                             <textarea class="form-control input-field" name="jawaban_text[<?= $i?>]" rows="4"><?= htmlspecialchars($s->jawaban_text ?? '')?></textarea>
+                                        </div>
+
+                                        <!-- Jawaban Gambar (editable) -->
+                                        <div class="form-group mb-3">
+                                            <div class="section-label">Jawaban Gambar (Canvas)</div>
+                                            <?php if ($s->jawaban_gambar): ?>
+                                            <img src="<?= base_url().'assets/jawaban_gambar/'.$s->jawaban_gambar?>" style="max-width:300px; border-radius:4px; margin-bottom:8px; display:block;" alt="">
+                                            <?php endif; ?>
+                                            <input type="file" class="form-control-file" name="jawaban_gambar[<?= $i?>]" accept=".jpg,.jpeg,.png">
+                                            <small class="text-muted">Kosongkan jika tidak ingin mengganti gambar. Maks 2MB (JPG/PNG).</small>
+                                        </div>
+
+                                        <!-- Jawaban File (editable) -->
+                                        <div class="form-group mb-3">
+                                            <div class="section-label">Jawaban File (PPT/PDF/DOC)</div>
+                                            <?php if ($s->jawaban_file): ?>
+                                            <p class="mb-1"><a href="<?= base_url().'assets/jawaban_file/'.$s->jawaban_file?>" target="_blank">Lihat Dokumen: <?= htmlspecialchars($s->jawaban_file)?></a></p>
+                                            <?php endif; ?>
+                                            <input type="file" class="form-control-file" name="jawaban_file[<?= $i?>]" accept=".ppt,.pptx,.pdf,.docx,.doc">
+                                            <small class="text-muted">Kosongkan jika tidak ingin mengganti file. Maks 2MB (PPT/PPTX/PDF/DOCX/DOC).</small>
                                         </div>
 
                                         <div class="row">

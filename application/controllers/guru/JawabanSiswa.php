@@ -45,13 +45,60 @@ class JawabanSiswa extends CI_Controller {
 			$nilai        = isset($nilai_arr[$i])    ? $nilai_arr[$i]    : NULL;
 			$feedback     = isset($feedback_arr[$i]) ? $feedback_arr[$i] : NULL;
 			$jawaban_text = isset($jawaban_arr[$i])  ? $jawaban_arr[$i]  : NULL;
-			$this->M_jawaban_essai->updateBulkByKelompokAndSoal($no_kelompok, $id_soal, $nilai, $feedback, $jawaban_text);
+
+			$jawaban_gambar = $this->_uploadIndexedFile('jawaban_gambar', $i, [
+				'upload_path'   => './assets/jawaban_gambar/',
+				'allowed_types' => 'jpeg|jpg|png',
+				'max_size'      => 2048,
+				'encrypt_name'  => TRUE,
+			]);
+			$jawaban_file = $this->_uploadIndexedFile('jawaban_file', $i, [
+				'upload_path'   => './assets/jawaban_file/',
+				'allowed_types' => 'ppt|pptx|pdf|docx|doc',
+				'max_size'      => 2048,
+				'encrypt_name'  => TRUE,
+			]);
+
+			$this->M_jawaban_essai->updateBulkByKelompokAndSoal($no_kelompok, $id_soal, $nilai, $feedback, $jawaban_text, $jawaban_gambar, $jawaban_file);
 		}
 
 		$this->session->set_flashdata('ver', 'FALSE');
 		$this->session->set_flashdata('class_alert', 'success');
-		$this->session->set_flashdata('alert', 'Nilai kelompok '.$no_kelompok.' berhasil diperbarui.');
+		$this->session->set_flashdata('alert', 'Jawaban dan nilai kelompok '.$no_kelompok.' berhasil diperbarui.');
 		redirect('guru/JawabanSiswa');
+	}
+
+	/**
+	 * Upload satu file dari input array bernama $field[$index], mis. jawaban_file[3].
+	 * Mengembalikan nama file hasil upload, atau NULL jika tidak ada file yang dipilih.
+	 */
+	private function _uploadIndexedFile($field, $index, $config)
+	{
+		if (empty($_FILES[$field]['name'][$index])) { return NULL; }
+
+		// CI3 upload library hanya baca $_FILES[$field] tunggal, jadi kita pindahkan
+		// entry array ke key sementara sebelum memanggil do_upload().
+		$tmp_field = $field . '_' . $index;
+		$_FILES[$tmp_field] = [
+			'name'     => $_FILES[$field]['name'][$index],
+			'type'     => $_FILES[$field]['type'][$index],
+			'tmp_name' => $_FILES[$field]['tmp_name'][$index],
+			'error'    => $_FILES[$field]['error'][$index],
+			'size'     => $_FILES[$field]['size'][$index],
+		];
+
+		$this->load->library('upload', $config);
+		$this->upload->initialize($config);
+
+		if ($this->upload->do_upload($tmp_field)) {
+			$data = $this->upload->data();
+			return $data['file_name'];
+		}
+
+		$this->session->set_flashdata('ver', 'FALSE');
+		$this->session->set_flashdata('class_alert', 'danger');
+		$this->session->set_flashdata('error', 'Error upload '.$field.' soal ke-'.($index+1).': '.$this->upload->display_errors());
+		return NULL;
 	}
 
 	public function index()
@@ -114,8 +161,6 @@ class JawabanSiswa extends CI_Controller {
             'updated_at'    =>date('Y-m-d H:i:s')
         );
 
-        $existing = $this->M_jawaban_essai->tampil_by_id($id);
-
         // Upload ulang gambar jika ada file baru
         if (!empty($_FILES['jawaban_gambar']['name'])) {
             $config_image['upload_path']   = './assets/jawaban_gambar/';
@@ -129,9 +174,8 @@ class JawabanSiswa extends CI_Controller {
             if ($this->upload->do_upload('jawaban_gambar')) {
                 $upload_data = $this->upload->data();
                 $data['jawaban_gambar'] = $upload_data['file_name'];
-                if ($existing && $existing->jawaban_gambar && file_exists('./assets/jawaban_gambar/'.$existing->jawaban_gambar)) {
-                    unlink('./assets/jawaban_gambar/'.$existing->jawaban_gambar);
-                }
+                // Catatan: file lama TIDAK dihapus dari disk karena nama file yang sama
+                // bisa saja masih dirujuk oleh baris lain (data lama/duplikat).
             } else {
                 $this->session->set_flashdata('ver', 'FALSE');
                 $this->session->set_flashdata('class_alert', 'danger');
@@ -153,9 +197,8 @@ class JawabanSiswa extends CI_Controller {
             if ($this->upload->do_upload('jawaban_file')) {
                 $upload_data = $this->upload->data();
                 $data['jawaban_file'] = $upload_data['file_name'];
-                if ($existing && $existing->jawaban_file && file_exists('./assets/jawaban_file/'.$existing->jawaban_file)) {
-                    unlink('./assets/jawaban_file/'.$existing->jawaban_file);
-                }
+                // Catatan: file lama TIDAK dihapus dari disk karena nama file yang sama
+                // bisa saja masih dirujuk oleh baris lain (data lama/duplikat).
             } else {
                 $this->session->set_flashdata('ver', 'FALSE');
                 $this->session->set_flashdata('class_alert', 'danger');

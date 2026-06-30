@@ -59,7 +59,7 @@
 			return $this->db->get('tb_user')->result();
 		}
 
-		public function updateBulkByKelompokAndSoal($no_kelompok, $id_soal, $nilai, $feedback, $jawaban_text = NULL) {
+		public function updateBulkByKelompokAndSoal($no_kelompok, $id_soal, $nilai, $feedback, $jawaban_text = NULL, $jawaban_gambar = NULL, $jawaban_file = NULL) {
 			$members = $this->getMembersByKelompok($no_kelompok);
 			if (empty($members)) return;
 			$ids = array_map(function($m) { return $m->id_user; }, $members);
@@ -68,7 +68,9 @@
 				'feedback'   => $feedback,
 				'updated_at' => date('Y-m-d H:i:s'),
 			];
-			if ($jawaban_text !== NULL) $data['jawaban_text'] = $jawaban_text;
+			if ($jawaban_text !== NULL)   $data['jawaban_text']   = $jawaban_text;
+			if ($jawaban_gambar !== NULL) $data['jawaban_gambar'] = $jawaban_gambar;
+			if ($jawaban_file !== NULL)   $data['jawaban_file']   = $jawaban_file;
 			$this->db->where_in('id_user', $ids);
 			$this->db->where('id_soal', $id_soal);
 			$this->db->update('tb_jawaban_essai', $data);
