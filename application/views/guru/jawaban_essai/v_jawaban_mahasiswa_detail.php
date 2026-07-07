@@ -21,6 +21,9 @@
         .soal-summary-card .soal-desc { color: #555; font-size: 13px; margin: 4px 0 12px 0; max-height: 3.2em; overflow: hidden; text-overflow: ellipsis; }
         .progress { height: 8px; border-radius: 4px; margin-bottom: 6px; }
         .soal-meta { font-size: 12px; color: #888; }
+        .nilai-tinggi { color: #2e7d32; }
+        .nilai-sedang { color: #e65100; }
+        .nilai-rendah { color: #c62828; }
     </style>
 
 <body class="theme-indigo">
@@ -144,7 +147,7 @@
                                         <?php if ($s->rata_nilai !== NULL): ?>
                                         <?php
                                             $nilai = round($s->rata_nilai, 1);
-                                            $nilaiClass = $nilai >= 80 ? 'text-success' : ($nilai >= 60 ? 'text-warning' : 'text-danger');
+                                            $nilaiClass = $nilai >= 80 ? 'nilai-tinggi' : ($nilai >= 60 ? 'nilai-sedang' : 'nilai-rendah');
                                         ?>
                                         <div class="<?= $nilaiClass?>" style="font-size:20px; font-weight:700;"><?= $nilai?></div>
                                         <div class="text-muted" style="font-size:11px;">rata-rata nilai</div>

@@ -23,6 +23,9 @@
         .kc-stat-row .material-icons { font-size: 18px; color: #9e9e9e; }
         .kc-nilai { font-size: 22px; font-weight: 700; }
         .kc-nilai-empty { font-size: 13px; color: #9e9e9e; font-weight: 400; }
+        .nilai-tinggi { color: #2e7d32; }
+        .nilai-sedang { color: #e65100; }
+        .nilai-rendah { color: #c62828; }
         .kelompok-card .kc-footer { padding: 12px 18px; border-top: 1px solid #f0f0f0; display: flex; gap: 8px; }
         .kelompok-card .kc-footer .btn { flex: 1; margin: 0; }
         .empty-state { text-align: center; padding: 60px 20px; color: #9e9e9e; }
@@ -154,7 +157,7 @@
                                             <?php if ($k->rata_nilai !== NULL): ?>
                                             <?php
                                                 $nilai = round($k->rata_nilai, 1);
-                                                $nilaiClass = $nilai >= 80 ? 'text-success' : ($nilai >= 60 ? 'text-warning' : 'text-danger');
+                                                $nilaiClass = $nilai >= 80 ? 'nilai-tinggi' : ($nilai >= 60 ? 'nilai-sedang' : 'nilai-rendah');
                                             ?>
                                             <span class="kc-nilai <?= $nilaiClass?>"><?= $nilai?></span> <span class="text-muted" style="font-size:12px;">rata-rata nilai</span>
                                             <?php else: ?>
