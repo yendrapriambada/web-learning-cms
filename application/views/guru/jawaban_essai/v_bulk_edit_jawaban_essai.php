@@ -119,6 +119,9 @@
                                         <input type="hidden" name="id_soal[<?= $i?>]" value="<?= $s->id_soal?>">
 
                                         <p class="mb-2"><b>Soal <?= $s->no_soal?>.</b> <?= htmlspecialchars($s->deksripsi_soal)?></p>
+                                        <?php if ($s->jawaban_text === NULL && $s->jawaban_gambar === NULL && $s->jawaban_file === NULL): ?>
+                                        <div class="jawaban-preview text-danger mb-2">Belum ada jawaban dari anggota kelompok untuk soal ini. Isi jawaban &amp; nilai di bawah untuk menyimpannya.</div>
+                                        <?php endif; ?>
 
                                         <!-- Jawaban (editable) -->
                                         <div class="form-group mb-3">
@@ -150,7 +153,7 @@
                                             <div class="col-md-3">
                                                 <div class="form-group mb-0">
                                                     <div class="section-label">Nilai <span class="text-danger">*</span></div>
-                                                    <input type="number" class="form-control input-field" name="nilai[<?= $i?>]" value="<?= $s->nilai?>" min="0" max="100" required>
+                                                    <input type="number" class="form-control input-field" name="nilai[<?= $i?>]" value="<?= $s->nilai ?? ''?>" min="0" max="100" required>
                                                 </div>
                                             </div>
                                             <div class="col-md-9">
