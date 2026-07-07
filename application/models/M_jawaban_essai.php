@@ -78,6 +78,94 @@
 			return $this->db->get('tb_user')->result();
 		}
 
+		/**
+		 * Ringkasan per kelompok untuk tampilan card: jumlah anggota, jumlah soal
+		 * yang sudah tersentuh jawaban, rata-rata nilai, dan aktivitas terakhir.
+		 */
+		public function getKelompokSummary($filters = array()) {
+			$this->db->select("u.no_kelompok, COUNT(DISTINCT u.id_user) AS jumlah_anggota, MAX(u.angkatan) AS angkatan, COUNT(DISTINCT je.id_soal) AS jumlah_soal_terjawab, AVG(je.nilai) AS rata_nilai, MAX(je.updated_at) AS last_update", FALSE);
+			$this->db->from('tb_user u');
+			$this->db->join('tb_jawaban_essai je', 'je.id_user = u.id_user', 'left');
+			$this->db->where('u.id_role_user', 1);
+			$this->db->where('u.no_kelompok IS NOT NULL');
+			$this->db->where('u.no_kelompok !=', '');
+			if (!empty($filters['no_kelompok'])) $this->db->like('u.no_kelompok', $filters['no_kelompok']);
+			if (!empty($filters['angkatan']))    $this->db->where('u.angkatan', $filters['angkatan']);
+			$this->db->group_by('u.no_kelompok');
+			$this->db->order_by('u.no_kelompok', 'ASC');
+			return $this->db->get()->result();
+		}
+
+		public function getDistinctAngkatanForKelompok() {
+			$this->db->select('angkatan');
+			$this->db->distinct();
+			$this->db->where('id_role_user', 1);
+			$this->db->where('no_kelompok IS NOT NULL');
+			$this->db->where('no_kelompok !=', '');
+			$this->db->order_by('angkatan', 'ASC');
+			return $this->db->get('tb_user')->result();
+		}
+
+		/**
+		 * Daftar soal untuk sebuah kelompok beserta statistik pengerjaan
+		 * (berapa anggota sudah menjawab & rata-rata nilai), dipakai untuk
+		 * tampilan drill-down kelompok -> soal.
+		 */
+		public function getSoalSummaryByKelompok($no_kelompok) {
+			$this->db->select('se.id_permasalahan');
+			$this->db->distinct();
+			$this->db->from('tb_jawaban_essai je');
+			$this->db->join('tb_user u', 'je.id_user = u.id_user');
+			$this->db->join('tb_soal_essai se', 'je.id_soal = se.id_soal_essai');
+			$this->db->where('u.no_kelompok', $no_kelompok);
+			$permasalahanIds = array_map(function($r) { return (int) $r->id_permasalahan; }, $this->db->get()->result());
+
+			if (empty($permasalahanIds)) return array();
+
+			$memberIds = array_map(function($m) { return (int) $m->id_user; }, $this->getMembersByKelompok($no_kelompok));
+
+			$this->db->select('se.id_soal_essai AS id_soal, se.no_soal, se.deksripsi_soal, pm.tahapan_pembelajaran, pm.judul_permasalahan, pt.no_pertemuan, pt.judul_pertemuan, COUNT(DISTINCT je.id_user) AS jumlah_terjawab, AVG(je.nilai) AS rata_nilai, MAX(je.updated_at) AS last_update', FALSE);
+			$this->db->from('tb_soal_essai se');
+			$this->db->join('tb_permasalahan pm', 'se.id_permasalahan = pm.id_permasalahan');
+			$this->db->join('tb_pertemuan pt', 'pm.id_pertemuan = pt.id_pertemuan');
+			if (!empty($memberIds)) {
+				$this->db->join('tb_jawaban_essai je', 'je.id_soal = se.id_soal_essai AND je.id_user IN (' . implode(',', $memberIds) . ')', 'left');
+			} else {
+				$this->db->join('tb_jawaban_essai je', 'je.id_soal = se.id_soal_essai AND 1 = 0', 'left');
+			}
+			$this->db->where_in('se.id_permasalahan', $permasalahanIds);
+			$this->db->group_by('se.id_soal_essai');
+			$this->db->order_by('pt.no_pertemuan, pm.tahapan_pembelajaran, se.no_soal', 'ASC');
+			return $this->db->get()->result();
+		}
+
+		public function getSoalDetail($id_soal) {
+			$this->db->select('se.id_soal_essai AS id_soal, se.no_soal, se.deksripsi_soal, pm.tahapan_pembelajaran, pm.judul_permasalahan, pt.no_pertemuan, pt.judul_pertemuan');
+			$this->db->from('tb_soal_essai se');
+			$this->db->join('tb_permasalahan pm', 'se.id_permasalahan = pm.id_permasalahan');
+			$this->db->join('tb_pertemuan pt', 'pm.id_pertemuan = pt.id_pertemuan');
+			$this->db->where('se.id_soal_essai', $id_soal);
+			return $this->db->get()->row();
+		}
+
+		/**
+		 * Jawaban tiap anggota kelompok untuk satu soal spesifik (drill-down
+		 * kelompok -> soal -> per mahasiswa). Anggota yang belum menjawab tetap
+		 * tampil dengan kolom jawaban kosong (LEFT JOIN).
+		 */
+		public function getJawabanPerSiswaBySoal($no_kelompok, $id_soal) {
+			$members = $this->getMembersByKelompok($no_kelompok);
+			if (empty($members)) return array();
+			$ids = array_map(function($m) { return (int) $m->id_user; }, $members);
+
+			$this->db->select('u.id_user, u.nama_lengkap, je.id_jawaban_essai, je.jawaban_text, je.jawaban_gambar, je.jawaban_file, je.nilai, je.feedback, je.created_at, je.updated_at');
+			$this->db->from('tb_user u');
+			$this->db->join('tb_jawaban_essai je', 'je.id_user = u.id_user AND je.id_soal = ' . (int) $id_soal, 'left');
+			$this->db->where_in('u.id_user', $ids);
+			$this->db->order_by('u.nama_lengkap', 'ASC');
+			return $this->db->get()->result();
+		}
+
 		public function updateBulkByKelompokAndSoal($no_kelompok, $id_soal, $nilai, $feedback, $jawaban_text = NULL, $jawaban_gambar = NULL, $jawaban_file = NULL) {
 			$members = $this->getMembersByKelompok($no_kelompok);
 			if (empty($members)) return;

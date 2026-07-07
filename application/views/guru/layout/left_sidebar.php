@@ -82,6 +82,9 @@
                     <li>
                         <a href="<?= base_url().'guru/JawabanSiswa'?>">Jawaban Mahasiswa/i</a>
                     </li>
+                    <li>
+                        <a href="<?= base_url().'guru/JawabanMahasiswa'?>">Jawaban Mahasiswa/i (Kelompok)</a>
+                    </li>
                 </ul>
             </li>
             <li>

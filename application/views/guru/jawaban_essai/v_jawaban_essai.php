@@ -11,6 +11,10 @@
     <!-- END CSS -->
     <style>
         .btn-clicked { transform: scale(0.98); box-shadow: inset 0 0 6px rgba(0,0,0,.25); }
+        .view-switch { display: inline-flex; border: 1px solid #e0e0e0; border-radius: 6px; overflow: hidden; margin-bottom: 20px; }
+        .view-switch a { padding: 8px 18px; color: #555; text-decoration: none; font-size: 13px; font-weight: 500; display: flex; align-items: center; gap: 6px; }
+        .view-switch a.active { background: #3f51b5; color: #fff; }
+        .view-switch a:not(.active):hover { background: #f5f5f5; }
     </style>
 
 
@@ -58,6 +62,13 @@
             <!-- Table User Siswa -->
             <div class="row clearfix">
                 <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+
+                    <!-- View Switch -->
+                    <div class="view-switch">
+                        <a href="<?= base_url().'guru/JawabanSiswa'?>" class="active"><i class="material-icons">table_chart</i> Tampilan Tabel</a>
+                        <a href="<?= base_url().'guru/JawabanMahasiswa'?>"><i class="material-icons">groups</i> Tampilan Kelompok</a>
+                    </div>
+
                     <div class="card">
                         <div class="header">
                             <h2>
