@@ -112,6 +112,15 @@
                                     </select>
                                 </div>
                                 <div class="col-md-2">
+                                    <label>Angkatan</label>
+                                    <select name="angkatan" class="form-control" onchange="this.form.submit()">
+                                        <option value="">Semua</option>
+                                        <?php foreach ($filter_angkatan as $f): ?>
+                                        <option value="<?= htmlspecialchars($f->angkatan)?>" <?= $filters['angkatan']==$f->angkatan?'selected':''?>><?= htmlspecialchars($f->angkatan)?></option>
+                                        <?php endforeach; ?>
+                                    </select>
+                                </div>
+                                <div class="col-md-2">
                                     <label>Pertemuan</label>
                                     <select name="no_pertemuan" class="form-control" onchange="this.form.submit()">
                                         <option value="">Semua</option>
@@ -120,7 +129,7 @@
                                         <?php endforeach; ?>
                                     </select>
                                 </div>
-                                <div class="col-md-3">
+                                <div class="col-md-2">
                                     <label>Tahap Pembelajaran</label>
                                     <select name="tahapan_pembelajaran" class="form-control" onchange="this.form.submit()">
                                         <option value="">Semua</option>
@@ -293,7 +302,10 @@
                 paging: false,
                 searching: false,
                 info: false,
-                ordering: false,
+                ordering: true,
+                columnDefs: [
+                    { orderable: false, targets: [0, 7, 11, 12] }
+                ],
                 buttons: ['copy', 'csv', 'excel', 'pdf', 'print']
             });
         });

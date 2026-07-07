@@ -110,6 +110,7 @@ class JawabanSiswa extends CI_Controller {
 		$filters = array(
 			'nama_lengkap'          => $this->input->get('nama_lengkap'),
 			'no_kelompok'           => $this->input->get('no_kelompok'),
+			'angkatan'              => $this->input->get('angkatan'),
 			'no_pertemuan'          => $this->input->get('no_pertemuan'),
 			'tahapan_pembelajaran'  => $this->input->get('tahapan_pembelajaran'),
 			'no_soal'               => $this->input->get('no_soal'),
@@ -125,6 +126,7 @@ class JawabanSiswa extends CI_Controller {
 
 		$data['filter_names']   = $this->M_jawaban_essai->getDistinctValues('nama_lengkap');
 		$data['filter_kelompok']= $this->M_jawaban_essai->getDistinctValues('no_kelompok');
+		$data['filter_angkatan']= $this->M_jawaban_essai->getDistinctValues('angkatan');
 		$data['filter_pertemuan']= $this->M_jawaban_essai->getDistinctValues('no_pertemuan');
 		$data['filter_tahap']   = $this->M_jawaban_essai->getDistinctValues('tahapan_pembelajaran');
 		$data['filter_soal']    = $this->M_jawaban_essai->getDistinctValues('no_soal');
