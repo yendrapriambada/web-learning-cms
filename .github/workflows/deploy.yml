@@ -27,8 +27,6 @@ jobs:
             **/.github/**
             **/application/cache/**
             **/application/logs/**
-            **/assets/uploads/**
-            **/assets/jawaban_file/**
-            **/assets/jawaban_gambar/**
-            **/assets/soal/**
-            **/assets/sumber_belajar/**
+            **/assets/**
+            **/assets_guru/**
+            **/assets_siswa/**
