@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
-    <title>Bulk Edit Tes Unity Kelompok <?= $no_kelompok?> | Pendidikan IPA Terpadu</title>
+    <title>Bulk Edit Nilai Tes Kelompok <?= $no_kelompok?> | Pendidikan IPA Terpadu</title>
     <?php $this->load->view('guru/layout/header')?>
 </head>
 <body class="theme-indigo">
@@ -28,7 +28,7 @@
     <section class="content">
         <div class="container-fluid">
             <div class="block-header">
-                <h2>Bulk Edit Nilai Tes Unity — Kelompok <?= htmlspecialchars($no_kelompok)?></h2>
+                <h2>Bulk Edit Nilai Tes — Kelompok <?= htmlspecialchars($no_kelompok)?></h2>
             </div>
 
             <form method="POST" action="<?= base_url().'guru/TestUnity/do_bulk_edit'?>">
@@ -39,7 +39,6 @@
                 $i = 0;
                 foreach ($grouped as $key => $group):
                     $rep = $group['rep'];
-                    $ids_str = implode(',', $group['ids']);
 
                     if ($rep->practice !== $current_practice):
                         if ($current_practice !== NULL) echo '</div></div></div>';
@@ -55,20 +54,24 @@
                             <!-- Pertanyaan card -->
                             <div class="card" style="border:1px solid #e0e0e0; margin-bottom:16px;">
                                 <div class="body" style="padding:16px;">
-                                    <input type="hidden" name="ids[<?= $i?>]" value="<?= htmlspecialchars($ids_str)?>">
+                                    <input type="hidden" name="indikator_soal[<?= $i?>]" value="<?= htmlspecialchars($rep->indikator_soal)?>">
+                                    <input type="hidden" name="practice[<?= $i?>]" value="<?= htmlspecialchars($rep->practice)?>">
+                                    <input type="hidden" name="pertanyaan[<?= $i?>]" value="<?= htmlspecialchars($rep->pertanyaan)?>">
 
-                                    <p class="text-muted" style="font-size:12px;"><?= htmlspecialchars($rep->indikator_soal)?></p>
-                                    <p><b>Pertanyaan:</b> <?= htmlspecialchars($rep->pertanyaan)?></p>
+                                    <p class="text-muted mb-1" style="font-size:12px;">No. <?= htmlspecialchars($rep->pertanyaan)?></p>
+                                    <p><?= htmlspecialchars($rep->indikator_soal)?></p>
 
+                                    <?php if (!$rep->jawaban): ?>
+                                    <div class="text-danger" style="font-size:12px; margin-bottom:10px;">Belum ada anggota kelompok yang mengerjakan soal ini.</div>
+                                    <?php else: ?>
                                     <!-- Preview jawaban -->
-                                    <?php if ($rep->jawaban): ?>
                                     <div style="background:#f5f5f5; border-radius:4px; padding:10px; margin-bottom:10px;">
                                         <small class="text-muted">Contoh jawaban:</small>
                                         <p class="mb-0"><?= nl2br(htmlspecialchars($rep->jawaban))?></p>
                                     </div>
                                     <?php endif; ?>
 
-                                    <small class="text-muted">Diterapkan ke <?= count($group['ids'])?> anggota kelompok</small>
+                                    <small class="text-muted">Diterapkan ke <?= $group['jumlah_anggota']?> anggota kelompok</small>
 
                                     <div class="row mt-2">
                                         <div class="col-md-3">

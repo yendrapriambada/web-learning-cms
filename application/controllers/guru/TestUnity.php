@@ -18,21 +18,23 @@ class TestUnity extends CI_Controller {
 	public function bulk_edit($no_kelompok = NULL)
 	{
 		if (!$no_kelompok) { redirect('guru/TestUnity'); }
+		// Termasuk soal yang belum dikerjakan sebagian/semua anggota (baris placeholder),
+		// supaya dosen tetap bisa menilai manual lewat bulk edit.
 		$rows = $this->M_test_unity->getByKelompok($no_kelompok);
 		if (empty($rows)) {
 			$this->session->set_flashdata('ver', 'FALSE');
 			$this->session->set_flashdata('class_alert', 'warning');
-			$this->session->set_flashdata('alert', 'Kelompok '.$no_kelompok.' belum memiliki data tes unity.');
+			$this->session->set_flashdata('alert', 'Kelompok '.$no_kelompok.' belum memiliki data tes.');
 			redirect('guru/TestUnity');
 		}
-		// Group by pertanyaan text so all members share one nilai+feedback input
+		// Group by practice+pertanyaan sehingga semua anggota berbagi satu input nilai+feedback
 		$grouped = [];
 		foreach ($rows as $r) {
 			$key = md5($r->practice . '|' . $r->pertanyaan);
 			if (!isset($grouped[$key])) {
-				$grouped[$key] = ['rep' => $r, 'ids' => []];
+				$grouped[$key] = ['rep' => $r, 'jumlah_anggota' => 0];
 			}
-			$grouped[$key]['ids'][] = $r->id_test_unity;
+			$grouped[$key]['jumlah_anggota']++;
 		}
 		$data['no_kelompok'] = $no_kelompok;
 		$data['grouped']     = $grouped;
@@ -41,18 +43,27 @@ class TestUnity extends CI_Controller {
 
 	public function do_bulk_edit()
 	{
-		$no_kelompok  = $this->input->post('no_kelompok');
-		$ids_arr      = $this->input->post('ids');     // ids[i] = "1,2,3"
-		$nilai_arr    = $this->input->post('nilai');
-		$feedback_arr = $this->input->post('feedback');
+		$no_kelompok      = $this->input->post('no_kelompok');
+		$indikator_arr    = $this->input->post('indikator_soal');
+		$practice_arr     = $this->input->post('practice');
+		$pertanyaan_arr   = $this->input->post('pertanyaan');
+		$nilai_arr        = $this->input->post('nilai');
+		$feedback_arr     = $this->input->post('feedback');
 
-		if (!$no_kelompok || empty($ids_arr)) { redirect('guru/TestUnity'); }
+		if (!$no_kelompok || empty($practice_arr)) { redirect('guru/TestUnity'); }
 
-		foreach ($ids_arr as $i => $ids_str) {
-			$ids      = array_filter(array_map('intval', explode(',', $ids_str)));
-			$nilai    = isset($nilai_arr[$i])    ? $nilai_arr[$i]    : NULL;
-			$feedback = isset($feedback_arr[$i]) ? $feedback_arr[$i] : NULL;
-			$this->M_test_unity->updateBulkByIds($ids, $nilai, $feedback);
+		foreach ($practice_arr as $i => $practice) {
+			$data = array(
+				'nilai'    => isset($nilai_arr[$i])    ? $nilai_arr[$i]    : NULL,
+				'feedback' => isset($feedback_arr[$i]) ? $feedback_arr[$i] : NULL,
+			);
+			$this->M_test_unity->updateOrInsertForGroup(
+				$no_kelompok,
+				isset($indikator_arr[$i]) ? $indikator_arr[$i] : NULL,
+				$practice,
+				isset($pertanyaan_arr[$i]) ? $pertanyaan_arr[$i] : NULL,
+				$data
+			);
 		}
 
 		$this->session->set_flashdata('ver', 'FALSE');
