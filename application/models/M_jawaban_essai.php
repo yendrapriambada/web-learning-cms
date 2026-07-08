@@ -11,10 +11,25 @@
 			return $query->result();
 		}
 
-		public function getRecordsPaginated($limit, $offset, $filters = array()) {
+		public function getRecordsPaginated($limit, $offset, $filters = array(), $sort = 'created_at', $dir = 'DESC') {
 			$this->_applyFilters($filters);
+			$this->_applySort($sort, $dir);
 			$this->db->limit($limit, $offset);
 			return $this->db->get('v_jawaban_essai')->result();
+		}
+
+		/**
+		 * Whitelist kolom yang boleh dipakai untuk sort supaya aman dari SQL injection
+		 * lewat parameter GET (kolom tidak dikenal otomatis jatuh ke default).
+		 */
+		private function _applySort($sort, $dir) {
+			$allowed = array(
+				'nama_lengkap', 'no_kelompok', 'angkatan', 'no_pertemuan',
+				'tahapan_pembelajaran', 'no_soal', 'nilai', 'created_at',
+			);
+			if (!in_array($sort, $allowed)) $sort = 'created_at';
+			$dir = strtoupper($dir) === 'ASC' ? 'ASC' : 'DESC';
+			$this->db->order_by($sort, $dir);
 		}
 
 		public function getRecordsCount($filters = array()) {
