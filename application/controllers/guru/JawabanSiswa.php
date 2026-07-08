@@ -116,9 +116,14 @@ class JawabanSiswa extends CI_Controller {
 			'no_soal'               => $this->input->get('no_soal'),
 		);
 
+		$sort = $this->input->get('sort') ?: 'created_at';
+		$dir  = strtoupper($this->input->get('dir')) === 'ASC' ? 'ASC' : 'DESC';
+
 		$total = $this->M_jawaban_essai->getRecordsCount($filters);
-		$data['jawabanEssai']  = $this->M_jawaban_essai->getRecordsPaginated($per_page, $offset, $filters);
+		$data['jawabanEssai']  = $this->M_jawaban_essai->getRecordsPaginated($per_page, $offset, $filters, $sort, $dir);
 		$data['filters']       = $filters;
+		$data['sort']          = $sort;
+		$data['dir']           = $dir;
 		$data['total']         = $total;
 		$data['per_page']      = $per_page;
 		$data['current_page']  = $page;

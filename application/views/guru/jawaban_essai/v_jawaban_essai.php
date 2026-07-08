@@ -11,6 +11,11 @@
     <!-- END CSS -->
     <style>
         .btn-clicked { transform: scale(0.98); box-shadow: inset 0 0 6px rgba(0,0,0,.25); }
+
+        .sort-link { color: inherit; text-decoration: none; display: inline-flex; align-items: center; gap: 2px; white-space: nowrap; }
+        .sort-link:hover { color: #3f51b5; text-decoration: none; }
+        .sort-link .material-icons { font-size: 15px; }
+        .sort-link.sort-active { color: #3f51b5; font-weight: 700; }
     </style>
 
 
@@ -67,12 +72,12 @@
                         <div class="body">
                             <?php if ($this->session->flashdata('ver') == "FALSE") { ?>
                                 <div class="alert alert-<?=$this->session->flashdata("class_alert");?>" role="alert">
-                                <?= $this->session->flashdata('alert'); 
+                                <?= $this->session->flashdata('alert');
                                     $this->session->set_flashdata('ver', 'TRUE');
                                 ?>
                                 </div>
                             <?php } ?>
-                            
+
                             <!-- Bulk Edit by Kelompok -->
                             <div class="row mb-3" style="background:#e8f5e9; border-radius:6px; padding:12px 16px; margin:0 0 16px 0;">
                                 <div class="col-md-12 mb-1"><b><i class="material-icons" style="vertical-align:middle;font-size:18px;">group</i> Bulk Edit Nilai per Kelompok</b> <small class="text-muted">— input nilai sekali, berlaku untuk semua anggota</small></div>
@@ -154,21 +159,34 @@
                             </div>
                             </form>
                             <br>
+                            <?php
+                                $sortBase = base_url().'guru/JawabanSiswa?';
+                                if (!function_exists('sortHeader')) {
+                                    function sortHeader($label, $col, $sort, $dir, $filters, $sortBase) {
+                                        $newDir = ($sort === $col && $dir === 'ASC') ? 'DESC' : 'ASC';
+                                        $href = $sortBase.http_build_query(array_merge($filters, ['sort' => $col, 'dir' => $newDir]));
+                                        $icon = 'unfold_more';
+                                        if ($sort === $col) $icon = $dir === 'ASC' ? 'arrow_upward' : 'arrow_downward';
+                                        $active = $sort === $col ? 'sort-active' : '';
+                                        return '<a href="'.$href.'" class="sort-link '.$active.'">'.$label.' <i class="material-icons">'.$icon.'</i></a>';
+                                    }
+                                }
+                            ?>
                             <div class="table-responsive">
                                 <table class="table table-bordered table-striped table-hover" id="jawabanTable">
                                     <thead>
                                         <tr>
                                             <th class="text-center">No</th>
-                                            <th class="text-center">Nama Mahasiswa</th>
-                                            <th class="text-center">No. Kelompok</th>
-                                            <th class="text-center">Angkatan</th>
-                                            <th class="text-center">Pertemuan</th>
-                                            <th class="text-center">Tahap Pembelajaran</th>
-                                            <th class="text-center">Nomor Soal</th>
+                                            <th class="text-center"><?= sortHeader('Nama Mahasiswa', 'nama_lengkap', $sort, $dir, $filters, $sortBase)?></th>
+                                            <th class="text-center"><?= sortHeader('No. Kelompok', 'no_kelompok', $sort, $dir, $filters, $sortBase)?></th>
+                                            <th class="text-center"><?= sortHeader('Angkatan', 'angkatan', $sort, $dir, $filters, $sortBase)?></th>
+                                            <th class="text-center"><?= sortHeader('Pertemuan', 'no_pertemuan', $sort, $dir, $filters, $sortBase)?></th>
+                                            <th class="text-center"><?= sortHeader('Tahap Pembelajaran', 'tahapan_pembelajaran', $sort, $dir, $filters, $sortBase)?></th>
+                                            <th class="text-center"><?= sortHeader('Nomor Soal', 'no_soal', $sort, $dir, $filters, $sortBase)?></th>
                                             <th class="text-center">Jawaban</th>
-                                            <th class="text-center">Nilai</th>
+                                            <th class="text-center"><?= sortHeader('Nilai', 'nilai', $sort, $dir, $filters, $sortBase)?></th>
                                             <th class="text-center">Feedback</th>
-                                            <th class="text-center">Tanggal Pengiriman</th>
+                                            <th class="text-center"><?= sortHeader('Tanggal Pengiriman', 'created_at', $sort, $dir, $filters, $sortBase)?></th>
                                             <th class="text-center">Lihat Detail</th>
                                             <th>Aksi</th>
                                         </tr>
@@ -258,7 +276,7 @@
                             <!-- Pagination -->
                             <?php if ($total_pages > 1): ?>
                             <?php
-                                $q = $filters;
+                                $q = array_merge($filters, ['sort' => $sort, 'dir' => $dir]);
                                 $base = base_url().'guru/JawabanSiswa?';
                             ?>
                             <nav>
@@ -302,10 +320,7 @@
                 paging: false,
                 searching: false,
                 info: false,
-                ordering: true,
-                columnDefs: [
-                    { orderable: false, targets: [0, 7, 11, 12] }
-                ],
+                ordering: false,
                 buttons: ['copy', 'csv', 'excel', 'pdf', 'print']
             });
         });
