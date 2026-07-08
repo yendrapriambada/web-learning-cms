@@ -78,6 +78,12 @@
                                 </div>
                             <?php } ?>
 
+                            <div class="m-b-20">
+                                <a href="<?= base_url().'guru/JawabanMahasiswa'?>" class="btn btn-default waves-effect">
+                                    <i class="material-icons" style="vertical-align:middle;">groups</i> Tampilan per Kelompok
+                                </a>
+                            </div>
+
                             <!-- Bulk Edit by Kelompok -->
                             <div class="row mb-3" style="background:#e8f5e9; border-radius:6px; padding:12px 16px; margin:0 0 16px 0;">
                                 <div class="col-md-12 mb-1"><b><i class="material-icons" style="vertical-align:middle;font-size:18px;">group</i> Bulk Edit Nilai per Kelompok</b> <small class="text-muted">— input nilai sekali, berlaku untuk semua anggota</small></div>
