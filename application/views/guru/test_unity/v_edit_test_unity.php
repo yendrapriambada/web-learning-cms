@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
-    <title>Edit Data Tes Unity | Pendidikan IPA Terpadu</title>
+    <title>Edit Data Tes | Pendidikan IPA Terpadu</title>
     
     <!-- CSS -->
     <?php $this->load->view('guru/layout/header')?>
@@ -56,7 +56,7 @@
                     <div class="card">
                         <div class="header">
                             <h2>
-                               Penilaian Tes Unity
+                               Penilaian Tes
                             </h2>
                         </div>
                         <div class="body">

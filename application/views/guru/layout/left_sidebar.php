@@ -93,6 +93,9 @@
                     <li>
                         <a href="<?= base_url().'guru/TestUnity'?>">Penilaian Tes</a>
                     </li>
+                    <li>
+                        <a href="<?= base_url().'guru/PenilaianTesKelompok'?>">Penilaian Tes (Kelompok)</a>
+                    </li>
                 </ul>
             </li>
             <li>
