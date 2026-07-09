@@ -91,6 +91,29 @@
                                 <?php endforeach; ?>
                             </div>
                             <p class="text-muted m-t-10 m-b-0">Klik salah satu soal di bawah untuk melihat dan menilai jawaban masing-masing anggota secara individual.</p>
+
+                            <form method="GET" action="<?= base_url().'guru/PenilaianTesKelompok/soal/'.urlencode($no_kelompok)?>" class="row m-t-15" style="align-items:flex-end;">
+                                <div class="col-md-4">
+                                    <label>Practice</label>
+                                    <select name="practice" class="form-control" onchange="this.form.submit()">
+                                        <option value="">Semua Practice</option>
+                                        <?php foreach ($practice_list as $p): ?>
+                                        <option value="<?= htmlspecialchars($p)?>" <?= $filters['practice']==$p?'selected':''?>><?= htmlspecialchars($p)?></option>
+                                        <?php endforeach; ?>
+                                    </select>
+                                </div>
+                                <div class="col-md-3">
+                                    <label>Status Dinilai</label>
+                                    <select name="status" class="form-control" onchange="this.form.submit()">
+                                        <option value="">Semua</option>
+                                        <option value="dinilai" <?= $filters['status']=='dinilai'?'selected':''?>>Sudah Dinilai Semua</option>
+                                        <option value="belum_dinilai" <?= $filters['status']=='belum_dinilai'?'selected':''?>>Ada yang Belum Dinilai</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-2">
+                                    <a href="<?= base_url().'guru/PenilaianTesKelompok/soal/'.urlencode($no_kelompok)?>" class="btn btn-default waves-effect">Reset Filter</a>
+                                </div>
+                            </form>
                         </div>
                     </div>
                 </div>
@@ -100,7 +123,7 @@
             <div class="row clearfix">
                 <div class="col-lg-12">
                     <div class="card"><div class="body text-center text-muted" style="padding:40px;">
-                        Kelompok ini belum pernah mengerjakan soal tes apa pun.
+                        <?= (!empty($filters['practice']) || !empty($filters['status'])) ? 'Tidak ada soal yang cocok dengan filter ini.' : 'Kelompok ini belum pernah mengerjakan soal tes apa pun.'?>
                     </div></div>
                 </div>
             </div>

@@ -24,7 +24,8 @@ class PenilaianTesKelompok extends CI_Controller {
 	public function index()
 	{
 		$filters = array(
-			'angkatan' => $this->input->get('angkatan'),
+			'angkatan'    => $this->input->get('angkatan'),
+			'no_kelompok' => $this->input->get('no_kelompok'),
 		);
 
 		$data['filters']         = $filters;
@@ -47,9 +48,35 @@ class PenilaianTesKelompok extends CI_Controller {
 			redirect('guru/PenilaianTesKelompok');
 		}
 
-		$data['no_kelompok'] = $no_kelompok;
-		$data['members']     = $hasil['members'];
-		$data['soalList']    = $hasil['soal'];
+		$filters = array(
+			'practice' => $this->input->get('practice'),
+			'status'   => $this->input->get('status'),
+		);
+
+		$soalList = $hasil['soal'];
+		if (!empty($filters['practice'])) {
+			$soalList = array_values(array_filter($soalList, function($s) use ($filters) {
+				return $s['practice'] === $filters['practice'];
+			}));
+		}
+		if ($filters['status'] === 'belum_dinilai') {
+			$soalList = array_values(array_filter($soalList, function($s) {
+				return $s['jumlah_dinilai'] < $s['total_anggota'];
+			}));
+		} else if ($filters['status'] === 'dinilai') {
+			$soalList = array_values(array_filter($soalList, function($s) {
+				return $s['jumlah_dinilai'] >= $s['total_anggota'] && $s['total_anggota'] > 0;
+			}));
+		}
+
+		$practiceList = array();
+		foreach ($hasil['soal'] as $s) { $practiceList[$s['practice']] = TRUE; }
+
+		$data['no_kelompok']   = $no_kelompok;
+		$data['members']       = $hasil['members'];
+		$data['soalList']      = $soalList;
+		$data['filters']       = $filters;
+		$data['practice_list'] = array_keys($practiceList);
 
 		$this->load->view('guru/penilaian_tes_kelompok/v_soal_list', $data);
 	}
