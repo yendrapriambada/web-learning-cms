@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
-    <title>Manajemen Tes Unity| Pendidikan IPA Terpadu</title>
+    <title>Manajemen Tes | Pendidikan IPA Terpadu</title>
     
     <!-- CSS -->
     <?php $this->load->view('guru/layout/header')?>
@@ -59,7 +59,7 @@
                     <div class="card">
                         <div class="header">
                             <h2>
-                                Data Tes Unity Mahasiswa
+                                Data Tes Mahasiswa
                             </h2>
                         </div>
                         <div class="body">
@@ -70,6 +70,12 @@
                                 ?>
                                 </div>
                             <?php } ?>
+
+                            <div class="m-b-20">
+                                <a href="<?= base_url().'guru/PenilaianTesKelompok'?>" class="btn btn-default waves-effect">
+                                    <i class="material-icons" style="vertical-align:middle;">groups</i> Tampilan per Kelompok
+                                </a>
+                            </div>
 
                             <!-- Bulk Edit by Kelompok -->
                             <div class="row mb-3" style="background:#e8f5e9; border-radius:6px; padding:12px 16px; margin:0 0 16px 0;">
