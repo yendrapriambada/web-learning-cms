@@ -5,6 +5,11 @@
     <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
     <title>Bulk Edit Nilai Tes Kelompok <?= $no_kelompok?> | Pendidikan IPA Terpadu</title>
     <?php $this->load->view('guru/layout/header')?>
+    <style>
+        .badge-pretest { background: #e3f2fd; color: #1565c0; }
+        .badge-posttest { background: #fff3e0; color: #ef6c00; }
+        .badge-unknown { background: #f5f5f5; color: #999; }
+    </style>
 </head>
 <body class="theme-indigo">
     <div class="page-loader-wrapper">
@@ -57,8 +62,18 @@
                                     <input type="hidden" name="indikator_soal[<?= $i?>]" value="<?= htmlspecialchars($rep->indikator_soal)?>">
                                     <input type="hidden" name="practice[<?= $i?>]" value="<?= htmlspecialchars($rep->practice)?>">
                                     <input type="hidden" name="pertanyaan[<?= $i?>]" value="<?= htmlspecialchars($rep->pertanyaan)?>">
+                                    <input type="hidden" name="test_type[<?= $i?>]" value="<?= $rep->test_type === '_unknown' ? '' : htmlspecialchars($rep->test_type)?>">
 
-                                    <p class="text-muted mb-1" style="font-size:12px;">No. <?= htmlspecialchars($rep->pertanyaan)?></p>
+                                    <p class="text-muted mb-1" style="font-size:12px;">
+                                        No. <?= htmlspecialchars($rep->pertanyaan)?>
+                                        <?php if ($rep->test_type === 'pretest'): ?>
+                                        <span class="badge badge-pretest">Pretest</span>
+                                        <?php elseif ($rep->test_type === 'posttest'): ?>
+                                        <span class="badge badge-posttest">Posttest</span>
+                                        <?php else: ?>
+                                        <span class="badge badge-unknown">Belum Ditandai</span>
+                                        <?php endif; ?>
+                                    </p>
                                     <p><?= htmlspecialchars($rep->indikator_soal)?></p>
 
                                     <?php if (!$rep->jawaban): ?>

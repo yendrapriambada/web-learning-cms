@@ -100,12 +100,33 @@
 		}
 
 		/**
-		 * Soal (practice + pertanyaan) yang pernah disentuh oleh SIAPA PUN anggota
-		 * kelompok ini. Tidak ada tabel master soal untuk tes ini (soal & jawaban
-		 * jadi satu baris di tb_test_unity), jadi "seluruh soal milik kelompok"
-		 * didekati dari gabungan soal yang sudah pernah dikerjakan anggotanya.
-		 * Practice dinormalisasi & pertanyaan diurutkan numerik agar tampilan
-		 * per practice tidak terpecah/acak akibat data mentah yang tidak rapi.
+		 * Nilai test_type dinormalisasi jadi string non-NULL supaya aman dipakai
+		 * sebagai bagian kunci array PHP (pretest/posttest/_unknown) dan sebagai
+		 * bagian WHERE (test_type IS NULL vs test_type = 'x').
+		 */
+		private static function _normalizeTestType($raw) {
+			return ($raw === NULL || $raw === '') ? '_unknown' : $raw;
+		}
+
+		private function _whereTestTypeEquals($test_type) {
+			if ($test_type === '_unknown' || $test_type === NULL || $test_type === '') {
+				$this->db->where('test_type IS NULL');
+			} else {
+				$this->db->where('test_type', $test_type);
+			}
+		}
+
+		/**
+		 * Soal (practice + pertanyaan + test_type) yang pernah disentuh oleh SIAPA
+		 * PUN anggota kelompok ini. Tidak ada tabel master soal untuk tes ini (soal
+		 * & jawaban jadi satu baris di tb_test_unity), jadi "seluruh soal milik
+		 * kelompok" didekati dari gabungan soal yang sudah pernah dikerjakan
+		 * anggotanya. Practice dinormalisasi & pertanyaan diurutkan numerik agar
+		 * tampilan per practice tidak terpecah/acak akibat data mentah yang tidak
+		 * rapi. test_type WAJIB ikut jadi bagian identitas soal -- practice+nomor
+		 * yang sama dipakai ulang untuk pretest & posttest dengan indikator_soal
+		 * (studi kasus) yang berbeda, jadi kalau tidak dipisah, jawaban pretest &
+		 * posttest akan tercampur jadi satu baris/grup yang sama.
 		 */
 		private function _getSoalKeysByKelompok($memberIds) {
 			if (empty($memberIds)) return array();
@@ -116,23 +137,30 @@
 			// Alias TIDAK BOLEH bernama "practice" -- MySQL/MariaDB ternyata mengutamakan
 			// kolom asli `practice` di GROUP BY/ORDER BY saat alias & nama kolom bertabrakan,
 			// sehingga normalisasi jadi tidak berefek (baris "acheiving"/typo tetap terpisah).
-			$this->db->select("$expr AS practice_norm, CAST(pertanyaan AS UNSIGNED) AS pertanyaan_num, pertanyaan, MIN(indikator_soal) AS indikator_soal", FALSE);
+			$this->db->select("$expr AS practice_norm, CAST(pertanyaan AS UNSIGNED) AS pertanyaan_num, pertanyaan, test_type, MIN(indikator_soal) AS indikator_soal", FALSE);
 			$this->db->where_in('id_user', $memberIds);
 			$this->db->group_by('practice_norm');
 			$this->db->group_by('pertanyaan');
+			$this->db->group_by('test_type');
 			$this->db->order_by('practice_norm', 'ASC');
 			$this->db->order_by('pertanyaan_num', 'ASC');
 			$this->db->order_by('pertanyaan', 'ASC');
+			// pretest dulu baru posttest baru yang belum ditandai, per nomor soal yang sama
+			$this->db->order_by("FIELD(test_type, 'pretest', 'posttest')", NULL, FALSE);
 			$rows = $this->db->get('tb_test_unity')->result();
-			foreach ($rows as $r) { $r->practice = $r->practice_norm; }
+			foreach ($rows as $r) {
+				$r->practice = $r->practice_norm;
+				$r->test_type = self::_normalizeTestType($r->test_type);
+			}
 			return $rows;
 		}
 
 		/**
 		 * Semua baris (nyata + placeholder) untuk kelompok ini: setiap anggota
-		 * dipasangkan dengan SETIAP soal yang pernah disentuh kelompoknya, supaya
-		 * anggota yang belum mengerjakan soal tsb tetap muncul (bisa dinilai
-		 * manual lewat bulk edit), bukan cuma baris yang sudah ada jawabannya.
+		 * dipasangkan dengan SETIAP soal (practice+pertanyaan+test_type) yang
+		 * pernah disentuh kelompoknya, supaya anggota yang belum mengerjakan soal
+		 * tsb tetap muncul (bisa dinilai manual lewat bulk edit), bukan cuma baris
+		 * yang sudah ada jawabannya.
 		 */
 		public function getByKelompok($no_kelompok) {
 			$members = $this->getMembersByKelompok($no_kelompok);
@@ -142,20 +170,21 @@
 			$soalKeys = $this->_getSoalKeysByKelompok($memberIds);
 			if (empty($soalKeys)) return array();
 
-			$this->db->select('id_test_unity, id_user, indikator_soal, practice, pertanyaan, jawaban, nilai, feedback');
+			$this->db->select('id_test_unity, id_user, indikator_soal, practice, pertanyaan, test_type, jawaban, nilai, feedback');
 			$this->db->where_in('id_user', $memberIds);
 			$existing = $this->db->get('tb_test_unity')->result();
 
 			$byKey = array();
 			foreach ($existing as $row) {
 				$normPractice = self::normalizePractice($row->practice);
-				$byKey[$normPractice . "\x1f" . $row->pertanyaan . "\x1f" . $row->id_user] = $row;
+				$normTestType = self::_normalizeTestType($row->test_type);
+				$byKey[$normPractice . "\x1f" . $row->pertanyaan . "\x1f" . $normTestType . "\x1f" . $row->id_user] = $row;
 			}
 
 			$rows = array();
 			foreach ($soalKeys as $sk) {
 				foreach ($members as $m) {
-					$lookupKey = $sk->practice . "\x1f" . $sk->pertanyaan . "\x1f" . $m->id_user;
+					$lookupKey = $sk->practice . "\x1f" . $sk->pertanyaan . "\x1f" . $sk->test_type . "\x1f" . $m->id_user;
 					if (isset($byKey[$lookupKey])) {
 						$r = $byKey[$lookupKey];
 					} else {
@@ -168,10 +197,12 @@
 							'feedback'       => NULL,
 						);
 					}
-					// Selalu pakai practice yang sudah dinormalisasi, apa pun sumbernya,
-					// supaya grouping di controller (md5 practice|pertanyaan) konsisten.
+					// Selalu pakai practice/test_type yang sudah dinormalisasi, apa pun
+					// sumbernya, supaya grouping di controller (md5 practice|pertanyaan|test_type)
+					// konsisten.
 					$r->practice     = $sk->practice;
 					$r->pertanyaan   = $sk->pertanyaan;
+					$r->test_type    = $sk->test_type;
 					$r->nama_lengkap = $m->nama_lengkap;
 					$r->no_kelompok  = $no_kelompok;
 					$rows[] = $r;
@@ -183,27 +214,30 @@
 
 		/**
 		 * Terapkan satu nilai/feedback (dan opsional jawaban) ke SEMUA anggota
-		 * kelompok untuk satu soal (practice+pertanyaan). Anggota yang sudah
-		 * punya baris -> update. Anggota yang belum -> insert baru, supaya soal
-		 * yang belum pernah dikerjakan siapa pun tetap bisa dinilai manual.
+		 * kelompok untuk satu soal (practice+pertanyaan+test_type). Anggota yang
+		 * sudah punya baris -> update. Anggota yang belum -> insert baru, supaya
+		 * soal yang belum pernah dikerjakan siapa pun tetap bisa dinilai manual.
 		 * Pencocokan baris lama pakai practice yang dinormalisasi supaya varian
 		 * mentah (typo/rusak) tetap ketemu & ikut terupdate.
 		 */
-		public function updateOrInsertForGroup($no_kelompok, $indikator_soal, $practice, $pertanyaan, $data) {
+		public function updateOrInsertForGroup($no_kelompok, $indikator_soal, $practice, $pertanyaan, $test_type, $data) {
 			$members = $this->getMembersByKelompok($no_kelompok);
 			if (empty($members)) return;
 			$ids = array_map(function($m) { return $m->id_user; }, $members);
+			$test_type = self::_normalizeTestType($test_type);
 
 			$this->db->select('id_user');
 			$this->db->where_in('id_user', $ids);
 			$this->_wherePracticeEquals($practice);
 			$this->db->where('pertanyaan', $pertanyaan);
+			$this->_whereTestTypeEquals($test_type);
 			$existingIds = array_map(function($r) { return $r->id_user; }, $this->db->get('tb_test_unity')->result());
 
 			if (!empty($existingIds)) {
 				$this->db->where_in('id_user', $existingIds);
 				$this->_wherePracticeEquals($practice);
 				$this->db->where('pertanyaan', $pertanyaan);
+				$this->_whereTestTypeEquals($test_type);
 				$this->db->update('tb_test_unity', $data);
 			}
 
@@ -214,6 +248,7 @@
 					'indikator_soal' => $indikator_soal,
 					'practice'       => $practice,
 					'pertanyaan'     => $pertanyaan,
+					'test_type'      => $test_type === '_unknown' ? NULL : $test_type,
 				]));
 			}
 		}
@@ -253,7 +288,7 @@
 			$allMemberIds = array();
 			foreach ($groups as $g) { $allMemberIds = array_merge($allMemberIds, $g['member_ids']); }
 
-			$this->db->select('id_user, practice, pertanyaan, jawaban, nilai');
+			$this->db->select('id_user, practice, pertanyaan, test_type, jawaban, nilai');
 			$this->db->where_in('id_user', $allMemberIds);
 			$answerRows = $this->db->get('tb_test_unity')->result();
 
@@ -262,7 +297,7 @@
 				foreach ($g['member_ids'] as $uid) { $userIdToKelompok[$uid] = $k; }
 			}
 
-			$soalPerKelompok = array(); // [kelompok] => set of practice|pertanyaan
+			$soalPerKelompok = array(); // [kelompok] => set of practice|pertanyaan|test_type
 			$terisiPerKelompok = array();
 			$dinilaiPerKelompok = array();
 			$nilaiAgg = array();
@@ -270,7 +305,7 @@
 			foreach ($answerRows as $a) {
 				$k = isset($userIdToKelompok[$a->id_user]) ? $userIdToKelompok[$a->id_user] : NULL;
 				if ($k === NULL) continue;
-				$key = self::normalizePractice($a->practice) . "\x1f" . $a->pertanyaan;
+				$key = self::normalizePractice($a->practice) . "\x1f" . $a->pertanyaan . "\x1f" . self::_normalizeTestType($a->test_type);
 				$soalPerKelompok[$k][$key] = TRUE;
 
 				$isFilled = ($a->jawaban !== NULL && $a->jawaban !== '');
@@ -310,8 +345,9 @@
 		}
 
 		/**
-		 * Daftar soal (dikelompokkan per practice) untuk satu kelompok, lengkap
-		 * dengan status "berapa anggota sudah menjawab / sudah dinilai".
+		 * Daftar soal (dikelompokkan per practice, dipisah pretest/posttest) untuk
+		 * satu kelompok, lengkap dengan status "berapa anggota sudah menjawab /
+		 * sudah dinilai".
 		 */
 		public function getSoalListByKelompok($no_kelompok) {
 			$members = $this->getMembersByKelompok($no_kelompok);
@@ -321,13 +357,13 @@
 			$soalKeys = $this->_getSoalKeysByKelompok($memberIds);
 			if (empty($soalKeys)) return array('members' => $members, 'soal' => array());
 
-			$this->db->select('id_user, practice, pertanyaan, jawaban, nilai');
+			$this->db->select('id_user, practice, pertanyaan, test_type, jawaban, nilai');
 			$this->db->where_in('id_user', $memberIds);
 			$answerRows = $this->db->get('tb_test_unity')->result();
 
-			$agg = array(); // [practice|pertanyaan] = ['menjawab'=>[uid=>true],'dinilai'=>[uid=>true],'sum'=>x,'count'=>y]
+			$agg = array(); // [practice|pertanyaan|test_type] = ['menjawab'=>[uid=>true],'dinilai'=>[uid=>true],'sum'=>x,'count'=>y]
 			foreach ($answerRows as $a) {
-				$key = self::normalizePractice($a->practice) . "\x1f" . $a->pertanyaan;
+				$key = self::normalizePractice($a->practice) . "\x1f" . $a->pertanyaan . "\x1f" . self::_normalizeTestType($a->test_type);
 				if (!isset($agg[$key])) $agg[$key] = array('menjawab' => array(), 'dinilai' => array(), 'sum' => 0, 'count' => 0);
 				if ($a->jawaban !== NULL && $a->jawaban !== '') $agg[$key]['menjawab'][$a->id_user] = TRUE;
 				if ($a->nilai !== NULL) {
@@ -340,13 +376,14 @@
 			$totalAnggota = count($members);
 			$soal = array();
 			foreach ($soalKeys as $sk) {
-				$key = $sk->practice . "\x1f" . $sk->pertanyaan;
+				$key = $sk->practice . "\x1f" . $sk->pertanyaan . "\x1f" . $sk->test_type;
 				$a = isset($agg[$key]) ? $agg[$key] : array('menjawab' => array(), 'dinilai' => array(), 'sum' => 0, 'count' => 0);
 				$soal[] = array(
-					'soal_key'        => self::encodeSoalKey($sk->practice, $sk->pertanyaan),
+					'soal_key'        => self::encodeSoalKey($sk->practice, $sk->pertanyaan, $sk->test_type),
 					'indikator_soal'  => $sk->indikator_soal,
 					'practice'        => $sk->practice,
 					'pertanyaan'      => $sk->pertanyaan,
+					'test_type'       => $sk->test_type,
 					'jumlah_menjawab' => count($a['menjawab']),
 					'jumlah_dinilai'  => count($a['dinilai']),
 					'total_anggota'   => $totalAnggota,
@@ -371,18 +408,21 @@
 		}
 
 		/**
-		 * Detail soal (practice+pertanyaan) + jawaban tiap siswa kelompok untuk soal itu.
-		 * Practice dicocokkan lewat normalisasi supaya varian mentah tetap ketemu.
+		 * Detail soal (practice+pertanyaan+test_type) + jawaban tiap siswa kelompok
+		 * untuk soal itu. Practice dicocokkan lewat normalisasi supaya varian
+		 * mentah tetap ketemu.
 		 */
-		public function getJawabanPerSiswa($no_kelompok, $practice, $pertanyaan) {
+		public function getJawabanPerSiswa($no_kelompok, $practice, $pertanyaan, $test_type) {
 			$members = $this->getMembersByKelompok($no_kelompok);
 			if (empty($members)) return NULL;
 			$memberIds = array_map(function($m) { return (int) $m->id_user; }, $members);
+			$test_type = self::_normalizeTestType($test_type);
 
 			$this->db->select('id_test_unity, id_user, indikator_soal, jawaban, nilai, feedback');
 			$this->db->where_in('id_user', $memberIds);
 			$this->_wherePracticeEquals($practice);
 			$this->db->where('pertanyaan', $pertanyaan);
+			$this->_whereTestTypeEquals($test_type);
 			$rows = $this->db->get('tb_test_unity')->result();
 			if (empty($rows)) return NULL;
 
@@ -407,12 +447,13 @@
 				'indikator_soal' => $indikator_soal,
 				'practice'       => $practice,
 				'pertanyaan'     => $pertanyaan,
+				'test_type'      => $test_type,
 				'siswa'          => $siswa,
 			);
 		}
 
-		public static function encodeSoalKey($practice, $pertanyaan) {
-			$json = json_encode(array($practice, $pertanyaan));
+		public static function encodeSoalKey($practice, $pertanyaan, $test_type = NULL) {
+			$json = json_encode(array($practice, $pertanyaan, self::_normalizeTestType($test_type)));
 			return rtrim(strtr(base64_encode($json), '+/', '-_'), '=');
 		}
 
@@ -421,8 +462,12 @@
 			$b64 .= str_repeat('=', (4 - strlen($b64) % 4) % 4);
 			$json = base64_decode($b64);
 			$arr  = $json !== FALSE ? json_decode($json, TRUE) : NULL;
-			if (!is_array($arr) || count($arr) !== 2) return NULL;
-			return array('practice' => $arr[0], 'pertanyaan' => $arr[1]);
+			if (!is_array($arr) || count($arr) < 2) return NULL;
+			return array(
+				'practice'   => $arr[0],
+				'pertanyaan' => $arr[1],
+				'test_type'  => isset($arr[2]) ? $arr[2] : '_unknown',
+			);
 		}
 
 		public function hapusJawaban($id) {
@@ -451,6 +496,7 @@
 			if (!empty($filters['angkatan']))      $this->db->where('angkatan', $filters['angkatan']);
 			if (!empty($filters['jenis_kelamin'])) $this->db->where('jenis_kelamin', $filters['jenis_kelamin']);
 			if (!empty($filters['practice']))      $this->_wherePracticeEquals($filters['practice']);
+			if (!empty($filters['test_type']))     $this->_whereTestTypeEquals($filters['test_type']);
 			if (!empty($filters['status'])) {
 				if ($filters['status'] === 'dinilai')        $this->db->where('nilai IS NOT NULL');
 				else if ($filters['status'] === 'belum_dinilai') $this->db->where('nilai IS NULL');
@@ -459,7 +505,7 @@
 
 		private function _applySort($sort, $dir) {
 			$allowed = array(
-				'nama_lengkap', 'no_kelompok', 'angkatan', 'jenis_kelamin', 'practice', 'nilai',
+				'nama_lengkap', 'no_kelompok', 'angkatan', 'jenis_kelamin', 'practice', 'test_type', 'nilai',
 			);
 			if (!in_array($sort, $allowed)) $sort = 'nama_lengkap';
 			$dir = strtoupper($dir) === 'DESC' ? 'DESC' : 'ASC';

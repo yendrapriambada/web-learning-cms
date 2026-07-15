@@ -49,14 +49,20 @@ class PenilaianTesKelompok extends CI_Controller {
 		}
 
 		$filters = array(
-			'practice' => $this->input->get('practice'),
-			'status'   => $this->input->get('status'),
+			'practice'  => $this->input->get('practice'),
+			'test_type' => $this->input->get('test_type'),
+			'status'    => $this->input->get('status'),
 		);
 
 		$soalList = $hasil['soal'];
 		if (!empty($filters['practice'])) {
 			$soalList = array_values(array_filter($soalList, function($s) use ($filters) {
 				return $s['practice'] === $filters['practice'];
+			}));
+		}
+		if (!empty($filters['test_type'])) {
+			$soalList = array_values(array_filter($soalList, function($s) use ($filters) {
+				return $s['test_type'] === $filters['test_type'];
 			}));
 		}
 		if ($filters['status'] === 'belum_dinilai') {
@@ -88,7 +94,7 @@ class PenilaianTesKelompok extends CI_Controller {
 		$soalKey = M_test_unity::decodeSoalKey($key);
 		if (!$soalKey) { redirect('guru/PenilaianTesKelompok/soal/'.$no_kelompok); }
 
-		$hasil = $this->M_test_unity->getJawabanPerSiswa($no_kelompok, $soalKey['practice'], $soalKey['pertanyaan']);
+		$hasil = $this->M_test_unity->getJawabanPerSiswa($no_kelompok, $soalKey['practice'], $soalKey['pertanyaan'], $soalKey['test_type']);
 		if (!$hasil) { redirect('guru/PenilaianTesKelompok/soal/'.$no_kelompok); }
 
 		$data['no_kelompok'] = $no_kelompok;
@@ -119,7 +125,7 @@ class PenilaianTesKelompok extends CI_Controller {
 		$soalKey = M_test_unity::decodeSoalKey($key);
 		if (!$soalKey) { redirect('guru/PenilaianTesKelompok/soal/'.$no_kelompok); }
 
-		$hasil = $this->M_test_unity->getJawabanPerSiswa($no_kelompok, $soalKey['practice'], $soalKey['pertanyaan']);
+		$hasil = $this->M_test_unity->getJawabanPerSiswa($no_kelompok, $soalKey['practice'], $soalKey['pertanyaan'], $soalKey['test_type']);
 		if (!$hasil) { redirect('guru/PenilaianTesKelompok/soal/'.$no_kelompok); }
 
 		$sample = NULL;
@@ -149,7 +155,7 @@ class PenilaianTesKelompok extends CI_Controller {
 		$feedback = $this->input->post('feedback');
 		$indikator_soal = $this->input->post('indikator_soal');
 
-		$this->M_test_unity->updateOrInsertForGroup($no_kelompok, $indikator_soal, $soalKey['practice'], $soalKey['pertanyaan'], array(
+		$this->M_test_unity->updateOrInsertForGroup($no_kelompok, $indikator_soal, $soalKey['practice'], $soalKey['pertanyaan'], $soalKey['test_type'], array(
 			'nilai'    => $nilai,
 			'feedback' => $feedback,
 		));
