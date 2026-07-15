@@ -27,6 +27,9 @@
         .input-field { background: #fffde7 !important; border: 2px solid #f9a825 !important; border-radius: 4px; }
         .input-field:focus { border-color: #e65100 !important; box-shadow: 0 0 0 2px rgba(230,81,0,.2) !important; }
         .section-label { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .5px; color: #888; margin-bottom: 4px; }
+        .badge-pretest { background: #e3f2fd; color: #1565c0; }
+        .badge-posttest { background: #fff3e0; color: #ef6c00; }
+        .badge-unknown { background: #f5f5f5; color: #999; }
     </style>
 
 
@@ -78,7 +81,16 @@
                             </a>
 
                             <div class="soal-banner">
-                                <div class="meta">Practice: <?= htmlspecialchars($soal['practice'])?> &nbsp;|&nbsp; No. <?= htmlspecialchars($soal['pertanyaan'])?></div>
+                                <div class="meta">
+                                    Practice: <?= htmlspecialchars($soal['practice'])?> &nbsp;|&nbsp; No. <?= htmlspecialchars($soal['pertanyaan'])?>
+                                    <?php if ($soal['test_type'] === 'pretest'): ?>
+                                    &nbsp;|&nbsp; <span class="badge badge-pretest">Pretest</span>
+                                    <?php elseif ($soal['test_type'] === 'posttest'): ?>
+                                    &nbsp;|&nbsp; <span class="badge badge-posttest">Posttest</span>
+                                    <?php else: ?>
+                                    &nbsp;|&nbsp; <span class="badge badge-unknown">Belum Ditandai</span>
+                                    <?php endif; ?>
+                                </div>
                                 <p class="desc"><?= htmlspecialchars($soal['indikator_soal'])?></p>
                             </div>
 
