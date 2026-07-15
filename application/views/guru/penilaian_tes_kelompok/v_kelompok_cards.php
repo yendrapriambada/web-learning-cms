@@ -111,13 +111,16 @@
                                     <a href="<?= base_url().'guru/TestUnity'?>" class="btn btn-default">Tampilan Tabel</a>
                                     <a href="<?= base_url().'guru/PenilaianTesKelompok'?>" class="btn active">Tampilan Kelompok</a>
                                 </div>
-                                <form method="GET" action="<?= base_url().'guru/PenilaianTesKelompok'?>" class="filter-row-end">
+                                <form method="GET" action="<?= base_url().'guru/PenilaianTesKelompok'?>" class="filter-row-end" style="gap:8px;">
+                                    <input type="text" name="no_kelompok" class="form-control" style="width:160px;" placeholder="Cari No. Kelompok" value="<?= htmlspecialchars($filters['no_kelompok'] ?? '')?>">
                                     <select name="angkatan" class="form-control" style="width:220px;" onchange="this.form.submit()">
                                         <option value="">Semua Angkatan</option>
                                         <?php foreach ($filter_angkatan as $f): ?>
                                         <option value="<?= htmlspecialchars($f->angkatan)?>" <?= $filters['angkatan']==$f->angkatan?'selected':''?>>Angkatan <?= htmlspecialchars($f->angkatan)?></option>
                                         <?php endforeach; ?>
                                     </select>
+                                    <button type="submit" class="btn btn-primary waves-effect"><i class="material-icons" style="vertical-align:middle;font-size:18px;">search</i> Cari</button>
+                                    <a href="<?= base_url().'guru/PenilaianTesKelompok'?>" class="btn btn-default waves-effect">Reset</a>
                                 </form>
                             </div>
 
