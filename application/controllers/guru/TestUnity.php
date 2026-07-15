@@ -74,8 +74,39 @@ class TestUnity extends CI_Controller {
 
 	public function index()
 	{
-		$data['testUnity']     = $this->M_test_unity->getRecordsView();
-		$data['kelompok_list'] = $this->M_test_unity->getKelompokList();
+		$per_page = 20;
+		$page     = max(1, (int) $this->input->get('page'));
+		$offset   = ($page - 1) * $per_page;
+
+		$filters = array(
+			'nama_lengkap'  => $this->input->get('nama_lengkap'),
+			'no_kelompok'   => $this->input->get('no_kelompok'),
+			'angkatan'      => $this->input->get('angkatan'),
+			'jenis_kelamin' => $this->input->get('jenis_kelamin'),
+			'practice'      => $this->input->get('practice'),
+			'status'        => $this->input->get('status'),
+		);
+
+		$sort = $this->input->get('sort') ?: 'nama_lengkap';
+		$dir  = strtoupper($this->input->get('dir')) === 'DESC' ? 'DESC' : 'ASC';
+
+		$total = $this->M_test_unity->getRecordsCount($filters);
+		$data['testUnity']     = $this->M_test_unity->getRecordsPaginated($per_page, $offset, $filters, $sort, $dir);
+		$data['filters']       = $filters;
+		$data['sort']          = $sort;
+		$data['dir']           = $dir;
+		$data['total']         = $total;
+		$data['per_page']      = $per_page;
+		$data['current_page']  = $page;
+		$data['total_pages']   = ceil($total / $per_page);
+
+		$data['filter_names']    = $this->M_test_unity->getDistinctValues('nama_lengkap');
+		$data['filter_kelompok'] = $this->M_test_unity->getDistinctValues('no_kelompok');
+		$data['filter_angkatan'] = $this->M_test_unity->getDistinctValues('angkatan');
+		$data['filter_gender']   = $this->M_test_unity->getDistinctValues('jenis_kelamin');
+		$data['filter_practice'] = $this->M_test_unity->getDistinctPractice();
+		$data['kelompok_list']   = $this->M_test_unity->getKelompokList();
+
 		$this->load->view('guru/test_unity/v_test_unity', $data);
 	}
 
