@@ -81,6 +81,16 @@
                                         <textarea class="form-control" id="exampleFormControlTextarea1" rows="4" disabled style="border: 1px grey solid; padding: 20px"><?= $dataById->pertanyaan?></textarea>
                                     </div>
 
+                                    <!-- Jenis Tes -->
+                                    <div class="form-group form-float">
+                                        <label class="form-label mb-3" for="test_type">Jenis Tes</label><br><br>
+                                        <select class="form-control" name="test_type" style="border: 1px grey solid; padding: 8px;">
+                                            <option value="" <?= empty($dataById->test_type) ? 'selected' : ''?>>-- Belum Ditandai --</option>
+                                            <option value="pretest" <?= $dataById->test_type=='pretest' ? 'selected' : ''?>>Pretest</option>
+                                            <option value="posttest" <?= $dataById->test_type=='posttest' ? 'selected' : ''?>>Posttest</option>
+                                        </select>
+                                    </div>
+
                                     <!-- Jawaban -->
                                     <div class="form-group form-float">
                                         <label class="form-label mb-3" for="jawaban">Jawaban Mahasiswa</label><br><br>

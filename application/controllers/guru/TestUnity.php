@@ -27,10 +27,12 @@ class TestUnity extends CI_Controller {
 			$this->session->set_flashdata('alert', 'Kelompok '.$no_kelompok.' belum memiliki data tes.');
 			redirect('guru/TestUnity');
 		}
-		// Group by practice+pertanyaan sehingga semua anggota berbagi satu input nilai+feedback
+		// Group by practice+pertanyaan+test_type sehingga semua anggota berbagi satu
+		// input nilai+feedback -- test_type WAJIB ikut jadi kunci karena practice+nomor
+		// yang sama dipakai ulang untuk pretest & posttest (soal beda, studi kasus beda).
 		$grouped = [];
 		foreach ($rows as $r) {
-			$key = md5($r->practice . '|' . $r->pertanyaan);
+			$key = md5($r->practice . '|' . $r->pertanyaan . '|' . $r->test_type);
 			if (!isset($grouped[$key])) {
 				$grouped[$key] = ['rep' => $r, 'jumlah_anggota' => 0];
 			}
@@ -47,6 +49,7 @@ class TestUnity extends CI_Controller {
 		$indikator_arr    = $this->input->post('indikator_soal');
 		$practice_arr     = $this->input->post('practice');
 		$pertanyaan_arr   = $this->input->post('pertanyaan');
+		$test_type_arr    = $this->input->post('test_type');
 		$nilai_arr        = $this->input->post('nilai');
 		$feedback_arr     = $this->input->post('feedback');
 
@@ -62,6 +65,7 @@ class TestUnity extends CI_Controller {
 				isset($indikator_arr[$i]) ? $indikator_arr[$i] : NULL,
 				$practice,
 				isset($pertanyaan_arr[$i]) ? $pertanyaan_arr[$i] : NULL,
+				isset($test_type_arr[$i]) ? $test_type_arr[$i] : NULL,
 				$data
 			);
 		}
@@ -70,6 +74,28 @@ class TestUnity extends CI_Controller {
 		$this->session->set_flashdata('class_alert', 'success');
 		$this->session->set_flashdata('alert', 'Nilai kelompok '.$no_kelompok.' berhasil diperbarui.');
 		redirect('guru/TestUnity');
+	}
+
+	/**
+	 * Tandai ulang test_type semua baris kelompok untuk satu soal sekaligus
+	 * (dipakai tombol "Tandai Pretest/Posttest" di halaman bulk edit).
+	 */
+	public function retag()
+	{
+		$no_kelompok    = $this->input->post('no_kelompok');
+		$practice       = $this->input->post('practice');
+		$pertanyaan     = $this->input->post('pertanyaan');
+		$old_test_type  = $this->input->post('old_test_type');
+		$new_test_type  = $this->input->post('new_test_type');
+
+		if ($no_kelompok && $practice !== NULL && $pertanyaan !== NULL && in_array($new_test_type, array('pretest', 'posttest'))) {
+			$this->M_test_unity->retagTestType($no_kelompok, $practice, $pertanyaan, $old_test_type, $new_test_type);
+			$this->session->set_flashdata('ver', 'FALSE');
+			$this->session->set_flashdata('class_alert', 'success');
+			$this->session->set_flashdata('alert', 'Soal No. '.$pertanyaan.' berhasil ditandai sebagai '.ucfirst($new_test_type).'.');
+		}
+
+		redirect('guru/TestUnity/bulk_edit/'.$no_kelompok);
 	}
 
 	public function index()
@@ -84,6 +110,7 @@ class TestUnity extends CI_Controller {
 			'angkatan'      => $this->input->get('angkatan'),
 			'jenis_kelamin' => $this->input->get('jenis_kelamin'),
 			'practice'      => $this->input->get('practice'),
+			'test_type'     => $this->input->get('test_type'),
 			'status'        => $this->input->get('status'),
 		);
 
@@ -129,10 +156,12 @@ class TestUnity extends CI_Controller {
 	function do_edit()
 	{
 		$id = $this->input->post('id_test_unity');
+        $test_type = $this->input->post('test_type');
         $data = array(
             'nilai'	        => $this->input->post('nilai'),
 			'jawaban'		=> $this->input->post('jawaban'),
-            'feedback'	    => $this->input->post('feedback')
+            'feedback'	    => $this->input->post('feedback'),
+            'test_type'     => $test_type !== '' ? $test_type : NULL,
         );
 
         $this->M_test_unity->update($id, $data);
