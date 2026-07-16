@@ -254,6 +254,24 @@
 		}
 
 		/**
+		 * Ubah test_type SEMUA baris kelompok ini untuk satu soal (practice+
+		 * pertanyaan) sekaligus -- dipakai tombol "Tandai Pretest/Posttest" di
+		 * daftar soal & bulk edit, supaya baris "Belum Ditandai" (atau salah
+		 * tandai) bisa dikoreksi tanpa buka form edit satu-satu per siswa.
+		 */
+		public function retagTestType($no_kelompok, $practice, $pertanyaan, $old_test_type, $new_test_type) {
+			$members = $this->getMembersByKelompok($no_kelompok);
+			if (empty($members)) return;
+			$ids = array_map(function($m) { return $m->id_user; }, $members);
+
+			$this->db->where_in('id_user', $ids);
+			$this->_wherePracticeEquals($practice);
+			$this->db->where('pertanyaan', $pertanyaan);
+			$this->_whereTestTypeEquals(self::_normalizeTestType($old_test_type));
+			$this->db->update('tb_test_unity', array('test_type' => $new_test_type));
+		}
+
+		/**
 		 * Ringkasan kartu per kelompok untuk halaman "Penilaian Tes per Kelompok".
 		 */
 		public function getKelompokCards($filters = array()) {

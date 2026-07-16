@@ -9,6 +9,7 @@
         .badge-pretest { background: #e3f2fd; color: #1565c0; }
         .badge-posttest { background: #fff3e0; color: #ef6c00; }
         .badge-unknown { background: #f5f5f5; color: #999; }
+        .retag-link { font-size: 11px; margin-left: 6px; text-decoration: underline; cursor: pointer; }
     </style>
 </head>
 <body class="theme-indigo">
@@ -73,6 +74,12 @@
                                         <?php else: ?>
                                         <span class="badge badge-unknown">Belum Ditandai</span>
                                         <?php endif; ?>
+                                        <?php if ($rep->test_type !== 'pretest'): ?>
+                                        <a class="retag-link" onclick="retagSoal('<?= htmlspecialchars(addslashes($rep->practice), ENT_QUOTES)?>', '<?= htmlspecialchars(addslashes($rep->pertanyaan), ENT_QUOTES)?>', '<?= $rep->test_type === '_unknown' ? '' : htmlspecialchars(addslashes($rep->test_type), ENT_QUOTES)?>', 'pretest')">→ Pretest</a>
+                                        <?php endif; ?>
+                                        <?php if ($rep->test_type !== 'posttest'): ?>
+                                        <a class="retag-link" onclick="retagSoal('<?= htmlspecialchars(addslashes($rep->practice), ENT_QUOTES)?>', '<?= htmlspecialchars(addslashes($rep->pertanyaan), ENT_QUOTES)?>', '<?= $rep->test_type === '_unknown' ? '' : htmlspecialchars(addslashes($rep->test_type), ENT_QUOTES)?>', 'posttest')">→ Posttest</a>
+                                        <?php endif; ?>
                                     </p>
                                     <p><?= htmlspecialchars($rep->indikator_soal)?></p>
 
@@ -117,10 +124,30 @@
                     </div>
                 </div>
             </form>
+
+            <!-- Form terpisah khusus tandai ulang pretest/posttest (tidak boleh nested
+                 di dalam form simpan nilai di atas), diisi & di-submit lewat JS. -->
+            <form method="POST" action="<?= base_url().'guru/TestUnity/retag'?>" id="retagForm">
+                <input type="hidden" name="no_kelompok" value="<?= htmlspecialchars($no_kelompok)?>">
+                <input type="hidden" name="practice" id="retagPractice">
+                <input type="hidden" name="pertanyaan" id="retagPertanyaan">
+                <input type="hidden" name="old_test_type" id="retagOldType">
+                <input type="hidden" name="new_test_type" id="retagNewType">
+            </form>
         </div>
     </section>
 
     <?php $this->load->view('guru/layout/javascript')?>
     <script src="<?= base_url();?>assets_guru/js/admin.js"></script>
+    <script>
+        function retagSoal(practice, pertanyaan, oldType, newType) {
+            if (!confirm('Tandai ulang Soal No. ' + pertanyaan + ' ini sebagai ' + newType + '?')) { return; }
+            document.getElementById('retagPractice').value = practice;
+            document.getElementById('retagPertanyaan').value = pertanyaan;
+            document.getElementById('retagOldType').value = oldType;
+            document.getElementById('retagNewType').value = newType;
+            document.getElementById('retagForm').submit();
+        }
+    </script>
 </body>
 </html>
