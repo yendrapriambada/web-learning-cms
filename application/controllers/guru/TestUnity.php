@@ -76,6 +76,28 @@ class TestUnity extends CI_Controller {
 		redirect('guru/TestUnity');
 	}
 
+	/**
+	 * Tandai ulang test_type semua baris kelompok untuk satu soal sekaligus
+	 * (dipakai tombol "Tandai Pretest/Posttest" di halaman bulk edit).
+	 */
+	public function retag()
+	{
+		$no_kelompok    = $this->input->post('no_kelompok');
+		$practice       = $this->input->post('practice');
+		$pertanyaan     = $this->input->post('pertanyaan');
+		$old_test_type  = $this->input->post('old_test_type');
+		$new_test_type  = $this->input->post('new_test_type');
+
+		if ($no_kelompok && $practice !== NULL && $pertanyaan !== NULL && in_array($new_test_type, array('pretest', 'posttest'))) {
+			$this->M_test_unity->retagTestType($no_kelompok, $practice, $pertanyaan, $old_test_type, $new_test_type);
+			$this->session->set_flashdata('ver', 'FALSE');
+			$this->session->set_flashdata('class_alert', 'success');
+			$this->session->set_flashdata('alert', 'Soal No. '.$pertanyaan.' berhasil ditandai sebagai '.ucfirst($new_test_type).'.');
+		}
+
+		redirect('guru/TestUnity/bulk_edit/'.$no_kelompok);
+	}
+
 	public function index()
 	{
 		$per_page = 20;

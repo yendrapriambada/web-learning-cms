@@ -87,6 +87,27 @@ class PenilaianTesKelompok extends CI_Controller {
 		$this->load->view('guru/penilaian_tes_kelompok/v_soal_list', $data);
 	}
 
+	/**
+	 * Tandai ulang test_type semua baris kelompok untuk satu soal sekaligus
+	 * (dipakai tombol "Tandai Pretest/Posttest" di daftar soal).
+	 */
+	public function retag($no_kelompok = NULL)
+	{
+		$practice      = $this->input->post('practice');
+		$pertanyaan    = $this->input->post('pertanyaan');
+		$old_test_type = $this->input->post('old_test_type');
+		$new_test_type = $this->input->post('new_test_type');
+
+		if ($no_kelompok && $practice !== NULL && $pertanyaan !== NULL && in_array($new_test_type, array('pretest', 'posttest'))) {
+			$this->M_test_unity->retagTestType($no_kelompok, $practice, $pertanyaan, $old_test_type, $new_test_type);
+			$this->session->set_flashdata('ver', 'FALSE');
+			$this->session->set_flashdata('class_alert', 'success');
+			$this->session->set_flashdata('alert', 'Soal No. '.$pertanyaan.' berhasil ditandai sebagai '.ucfirst($new_test_type).'.');
+		}
+
+		redirect('guru/PenilaianTesKelompok/soal/'.$no_kelompok);
+	}
+
 	public function detail($no_kelompok = NULL, $key = NULL)
 	{
 		if (!$no_kelompok || !$key) { redirect('guru/PenilaianTesKelompok'); }
