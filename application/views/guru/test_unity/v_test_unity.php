@@ -17,6 +17,8 @@
         .badge-pretest { background: #e3f2fd; color: #1565c0; }
         .badge-posttest { background: #fff3e0; color: #ef6c00; }
         .badge-unknown { background: #f5f5f5; color: #999; }
+        .view-toggle .btn { border-radius: 20px; padding: 6px 18px; font-size: 13px; }
+        .view-toggle .btn.active { background: #3F51B5; color: #fff; }
     </style>
 
 </head>
@@ -80,10 +82,10 @@
                                 </div>
                             <?php } ?>
 
-                            <div class="m-b-20">
-                                <a href="<?= base_url().'guru/PenilaianTesKelompok'?>" class="btn btn-default waves-effect">
-                                    <i class="material-icons" style="vertical-align:middle;">groups</i> Tampilan per Kelompok
-                                </a>
+                            <div class="m-b-20 view-toggle btn-group" role="group">
+                                <a href="<?= base_url().'guru/TestUnity'?>" class="btn active">Tampilan Tabel</a>
+                                <a href="<?= base_url().'guru/PenilaianTesKelompok'?>" class="btn btn-default">Tampilan Kelompok</a>
+                                <a href="<?= base_url().'guru/PenilaianTesJenis'?>" class="btn btn-default">Tampilan Jenis Tes</a>
                             </div>
 
                             <!-- Bulk Edit by Kelompok -->
