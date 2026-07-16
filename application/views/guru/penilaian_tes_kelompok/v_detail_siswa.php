@@ -39,6 +39,9 @@
         .nilai-pill.empty { background: #f5f5f5; color: #999; font-weight: 400; }
         .feedback-text { font-size: 12px; color: #777; margin-top: 6px; font-style: italic; }
         .btn-hapus-siswa { color: #c62828; text-decoration: none; display: inline-block; margin-top: 8px; }
+        .badge-pretest { background: #e3f2fd; color: #1565c0; }
+        .badge-posttest { background: #fff3e0; color: #ef6c00; }
+        .badge-unknown { background: #f5f5f5; color: #999; }
     </style>
 
 
@@ -94,7 +97,16 @@
                             </a>
 
                             <div class="soal-banner">
-                                <div class="meta">Practice: <?= htmlspecialchars($soal['practice'])?> &nbsp;|&nbsp; No. <?= htmlspecialchars($soal['pertanyaan'])?></div>
+                                <div class="meta">
+                                    Practice: <?= htmlspecialchars($soal['practice'])?> &nbsp;|&nbsp; No. <?= htmlspecialchars($soal['pertanyaan'])?>
+                                    <?php if ($soal['test_type'] === 'pretest'): ?>
+                                    &nbsp;|&nbsp; <span class="badge badge-pretest">Pretest</span>
+                                    <?php elseif ($soal['test_type'] === 'posttest'): ?>
+                                    &nbsp;|&nbsp; <span class="badge badge-posttest">Posttest</span>
+                                    <?php else: ?>
+                                    &nbsp;|&nbsp; <span class="badge badge-unknown">Belum Ditandai</span>
+                                    <?php endif; ?>
+                                </div>
                                 <p class="desc"><?= htmlspecialchars($soal['indikator_soal'])?></p>
                             </div>
 

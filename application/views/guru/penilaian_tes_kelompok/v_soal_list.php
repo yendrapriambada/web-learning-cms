@@ -36,8 +36,15 @@
         .chip-menjawab { background: #e8f5e9; color: #2e7d32; }
         .chip-dinilai  { background: #e3f2fd; color: #1565c0; }
         .chip-nilai    { background: #fff3e0; color: #ef6c00; }
+        .chip-pretest  { background: #e3f2fd; color: #1565c0; }
+        .chip-posttest { background: #fff3e0; color: #ef6c00; }
+        .chip-unknown  { background: #f5f5f5; color: #999; }
         .soal-row .arrow { color: #bbb; }
         .soal-row:hover .arrow { color: #3F51B5; }
+
+        .soal-row-container { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; }
+        .soal-row-container .soal-row { margin-bottom: 0; flex: 1; }
+        .retag-form select { font-size: 11px; padding: 4px 8px; border-radius: 6px; border: 1px solid #ddd; }
     </style>
 
 
@@ -103,6 +110,15 @@
                                     </select>
                                 </div>
                                 <div class="col-md-3">
+                                    <label>Jenis Tes</label>
+                                    <select name="test_type" class="form-control" onchange="this.form.submit()">
+                                        <option value="">Semua</option>
+                                        <option value="pretest" <?= $filters['test_type']=='pretest'?'selected':''?>>Pretest</option>
+                                        <option value="posttest" <?= $filters['test_type']=='posttest'?'selected':''?>>Posttest</option>
+                                        <option value="_unknown" <?= $filters['test_type']=='_unknown'?'selected':''?>>Belum Ditandai</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-3">
                                     <label>Status Dinilai</label>
                                     <select name="status" class="form-control" onchange="this.form.submit()">
                                         <option value="">Semua</option>
@@ -123,7 +139,7 @@
             <div class="row clearfix">
                 <div class="col-lg-12">
                     <div class="card"><div class="body text-center text-muted" style="padding:40px;">
-                        <?= (!empty($filters['practice']) || !empty($filters['status'])) ? 'Tidak ada soal yang cocok dengan filter ini.' : 'Kelompok ini belum pernah mengerjakan soal tes apa pun.'?>
+                        <?= (!empty($filters['practice']) || !empty($filters['test_type']) || !empty($filters['status'])) ? 'Tidak ada soal yang cocok dengan filter ini.' : 'Kelompok ini belum pernah mengerjakan soal tes apa pun.'?>
                     </div></div>
                 </div>
             </div>
@@ -144,12 +160,20 @@
                                 <div class="practice-title">Practice: <?= htmlspecialchars($s['practice'])?></div>
                             <?php endif; ?>
 
+                            <div class="soal-row-container">
                             <a class="soal-row" href="<?= base_url().'guru/PenilaianTesKelompok/detail/'.urlencode($no_kelompok).'/'.$s['soal_key']?>">
                                 <div class="soal-text">
                                     <span class="soal-no">No. <?= htmlspecialchars($s['pertanyaan'])?>.</span>
                                     <span class="soal-desc"><?= htmlspecialchars(mb_strimwidth($s['indikator_soal'], 0, 140, '…'))?></span>
                                 </div>
                                 <div class="soal-chips">
+                                    <?php if ($s['test_type'] === 'pretest'): ?>
+                                    <span class="chip chip-pretest">Pretest</span>
+                                    <?php elseif ($s['test_type'] === 'posttest'): ?>
+                                    <span class="chip chip-posttest">Posttest</span>
+                                    <?php else: ?>
+                                    <span class="chip chip-unknown">Belum Ditandai</span>
+                                    <?php endif; ?>
                                     <span class="chip chip-menjawab">Menjawab: <?= $s['jumlah_menjawab']?>/<?= $s['total_anggota']?></span>
                                     <span class="chip chip-dinilai">Dinilai: <?= $s['jumlah_dinilai']?>/<?= $s['total_anggota']?></span>
                                     <?php if ($s['rata_nilai'] !== null): ?>
@@ -158,6 +182,17 @@
                                 </div>
                                 <i class="material-icons arrow">arrow_forward</i>
                             </a>
+                            <form method="POST" action="<?= base_url().'guru/PenilaianTesKelompok/retag/'.urlencode($no_kelompok)?>" class="retag-form">
+                                <input type="hidden" name="practice" value="<?= htmlspecialchars($s['practice'])?>">
+                                <input type="hidden" name="pertanyaan" value="<?= htmlspecialchars($s['pertanyaan'])?>">
+                                <input type="hidden" name="old_test_type" value="<?= $s['test_type'] === '_unknown' ? '' : htmlspecialchars($s['test_type'])?>">
+                                <select name="new_test_type" title="Tandai ulang jenis tes" onchange="if(this.value && confirm('Tandai ulang Soal No. <?= htmlspecialchars(addslashes($s['pertanyaan']))?> ini sebagai '+this.value+'?')){ this.form.submit(); } else { this.value=''; }">
+                                    <option value="">Tandai ulang…</option>
+                                    <option value="pretest">→ Pretest</option>
+                                    <option value="posttest">→ Posttest</option>
+                                </select>
+                            </form>
+                            </div>
 
                             <?php endforeach; ?>
                             <?php if ($curPractice !== NULL) echo '</div>'; // tutup practice-block terakhir ?>

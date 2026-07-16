@@ -49,14 +49,20 @@ class PenilaianTesKelompok extends CI_Controller {
 		}
 
 		$filters = array(
-			'practice' => $this->input->get('practice'),
-			'status'   => $this->input->get('status'),
+			'practice'  => $this->input->get('practice'),
+			'test_type' => $this->input->get('test_type'),
+			'status'    => $this->input->get('status'),
 		);
 
 		$soalList = $hasil['soal'];
 		if (!empty($filters['practice'])) {
 			$soalList = array_values(array_filter($soalList, function($s) use ($filters) {
 				return $s['practice'] === $filters['practice'];
+			}));
+		}
+		if (!empty($filters['test_type'])) {
+			$soalList = array_values(array_filter($soalList, function($s) use ($filters) {
+				return $s['test_type'] === $filters['test_type'];
 			}));
 		}
 		if ($filters['status'] === 'belum_dinilai') {
@@ -81,6 +87,27 @@ class PenilaianTesKelompok extends CI_Controller {
 		$this->load->view('guru/penilaian_tes_kelompok/v_soal_list', $data);
 	}
 
+	/**
+	 * Tandai ulang test_type semua baris kelompok untuk satu soal sekaligus
+	 * (dipakai tombol "Tandai Pretest/Posttest" di daftar soal).
+	 */
+	public function retag($no_kelompok = NULL)
+	{
+		$practice      = $this->input->post('practice');
+		$pertanyaan    = $this->input->post('pertanyaan');
+		$old_test_type = $this->input->post('old_test_type');
+		$new_test_type = $this->input->post('new_test_type');
+
+		if ($no_kelompok && $practice !== NULL && $pertanyaan !== NULL && in_array($new_test_type, array('pretest', 'posttest'))) {
+			$this->M_test_unity->retagTestType($no_kelompok, $practice, $pertanyaan, $old_test_type, $new_test_type);
+			$this->session->set_flashdata('ver', 'FALSE');
+			$this->session->set_flashdata('class_alert', 'success');
+			$this->session->set_flashdata('alert', 'Soal No. '.$pertanyaan.' berhasil ditandai sebagai '.ucfirst($new_test_type).'.');
+		}
+
+		redirect('guru/PenilaianTesKelompok/soal/'.$no_kelompok);
+	}
+
 	public function detail($no_kelompok = NULL, $key = NULL)
 	{
 		if (!$no_kelompok || !$key) { redirect('guru/PenilaianTesKelompok'); }
@@ -88,7 +115,7 @@ class PenilaianTesKelompok extends CI_Controller {
 		$soalKey = M_test_unity::decodeSoalKey($key);
 		if (!$soalKey) { redirect('guru/PenilaianTesKelompok/soal/'.$no_kelompok); }
 
-		$hasil = $this->M_test_unity->getJawabanPerSiswa($no_kelompok, $soalKey['practice'], $soalKey['pertanyaan']);
+		$hasil = $this->M_test_unity->getJawabanPerSiswa($no_kelompok, $soalKey['practice'], $soalKey['pertanyaan'], $soalKey['test_type']);
 		if (!$hasil) { redirect('guru/PenilaianTesKelompok/soal/'.$no_kelompok); }
 
 		$data['no_kelompok'] = $no_kelompok;
@@ -119,7 +146,7 @@ class PenilaianTesKelompok extends CI_Controller {
 		$soalKey = M_test_unity::decodeSoalKey($key);
 		if (!$soalKey) { redirect('guru/PenilaianTesKelompok/soal/'.$no_kelompok); }
 
-		$hasil = $this->M_test_unity->getJawabanPerSiswa($no_kelompok, $soalKey['practice'], $soalKey['pertanyaan']);
+		$hasil = $this->M_test_unity->getJawabanPerSiswa($no_kelompok, $soalKey['practice'], $soalKey['pertanyaan'], $soalKey['test_type']);
 		if (!$hasil) { redirect('guru/PenilaianTesKelompok/soal/'.$no_kelompok); }
 
 		$sample = NULL;
@@ -149,7 +176,7 @@ class PenilaianTesKelompok extends CI_Controller {
 		$feedback = $this->input->post('feedback');
 		$indikator_soal = $this->input->post('indikator_soal');
 
-		$this->M_test_unity->updateOrInsertForGroup($no_kelompok, $indikator_soal, $soalKey['practice'], $soalKey['pertanyaan'], array(
+		$this->M_test_unity->updateOrInsertForGroup($no_kelompok, $indikator_soal, $soalKey['practice'], $soalKey['pertanyaan'], $soalKey['test_type'], array(
 			'nilai'    => $nilai,
 			'feedback' => $feedback,
 		));

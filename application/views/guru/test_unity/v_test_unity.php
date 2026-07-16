@@ -14,6 +14,9 @@
         .sort-link:hover { color: #3f51b5; text-decoration: none; }
         .sort-link .material-icons { font-size: 15px; }
         .sort-link.sort-active { color: #3f51b5; font-weight: 700; }
+        .badge-pretest { background: #e3f2fd; color: #1565c0; }
+        .badge-posttest { background: #fff3e0; color: #ef6c00; }
+        .badge-unknown { background: #f5f5f5; color: #999; }
     </style>
 
 </head>
@@ -150,6 +153,15 @@
                                     </select>
                                 </div>
                                 <div class="col-md-2">
+                                    <label>Jenis Tes</label>
+                                    <select name="test_type" class="form-control" onchange="this.form.submit()">
+                                        <option value="">Semua</option>
+                                        <option value="pretest" <?= $filters['test_type']=='pretest'?'selected':''?>>Pretest</option>
+                                        <option value="posttest" <?= $filters['test_type']=='posttest'?'selected':''?>>Posttest</option>
+                                        <option value="_unknown" <?= $filters['test_type']=='_unknown'?'selected':''?>>Belum Ditandai</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-2">
                                     <label>Status Nilai</label>
                                     <select name="status" class="form-control" onchange="this.form.submit()">
                                         <option value="">Semua</option>
@@ -187,6 +199,7 @@
                                             <th class="text-center"><?= sortHeaderTestUnity('Jenis Kelamin', 'jenis_kelamin', $sort, $dir, $filters, $sortBase)?></th>
                                             <th class="text-center"><?= sortHeaderTestUnity('Angkatan', 'angkatan', $sort, $dir, $filters, $sortBase)?></th>
                                             <th class="text-center"><?= sortHeaderTestUnity('Practice', 'practice', $sort, $dir, $filters, $sortBase)?></th>
+                                            <th class="text-center"><?= sortHeaderTestUnity('Jenis Tes', 'test_type', $sort, $dir, $filters, $sortBase)?></th>
                                             <th class="text-center">Indikator Soal</th>
                                             <th class="text-center">No.</th>
                                             <th class="text-center">Jawaban</th>
@@ -204,6 +217,15 @@
                                                 <td class="text-center align-top"><?= $s->jenis_kelamin?></td>
                                                 <td class="text-center align-top"><?= $s->angkatan?></td>
                                                 <td class="align-top"><?= htmlspecialchars(M_test_unity::normalizePractice($s->practice))?></td>
+                                                <td class="text-center align-top">
+                                                    <?php if ($s->test_type === 'pretest'): ?>
+                                                    <span class="badge badge-pretest">Pretest</span>
+                                                    <?php elseif ($s->test_type === 'posttest'): ?>
+                                                    <span class="badge badge-posttest">Posttest</span>
+                                                    <?php else: ?>
+                                                    <span class="badge badge-unknown">-</span>
+                                                    <?php endif; ?>
+                                                </td>
                                                 <td class="align-top"><?= $s->indikator_soal?></td>
                                                 <td class="text-center align-top"><?= $s->pertanyaan?></td>
                                                 <td class="align-top"><?= $s->jawaban?></td>
