@@ -58,19 +58,14 @@
          <div class="projects_section_2 layout_padding">
             <div class="container">
                <div class="pets_section">
-                <!-- kondisi permasalahan null atau tidak -->
-                <?php          
-                    if ($dataByPertemuan == NULL) {
-                        // Data permasalahan kosong atau null
-                        echo "Komentar belum tersedia. <br><br>";
-                    } else {
-                ?>
-                <!-- kondisi permasalahan null atau tidak -->
                 <div class="chat-container">
                     <div class="chat-header bg-light">
                         <h5 class="mb-0">Diskusi Perkuliahan Pertemuan Ke-<?= $pertemuanById->no_pertemuan?></h5>
                     </div>
                     <div class="chat-body">
+                        <?php if ($dataByPertemuan == NULL): ?>
+                        <p class="text-muted">Komentar belum tersedia. Jadilah yang pertama berkomentar!</p>
+                        <?php else: ?>
                         <?php $no=1; foreach ($dataByPertemuan as $d) :?>
                             <?php if($d->id_user == $this->session->userdata("id_user")) {?>
                                 <div class="chat-message received">
@@ -100,6 +95,7 @@
                                 </div>
                             <?php }?>
                         <?php $no++; endforeach; ?>
+                        <?php endif; ?>
                     </div>
                     <div class="chat-footer">
                         <p><b>Tambahkan Komentar Baru</b></p>
@@ -113,7 +109,7 @@
                                 </div>
                             </div>
                             <?= form_error("komentar",
-                                    "<div class='alert alert-danger alert-dismissible' role='alert'>", 
+                                    "<div class='alert alert-danger alert-dismissible' role='alert'>",
                                     "<button type='button' class='btn-close' data-bs-dismiss='alert' aria-label='Close'></button>
                                     </div>")?>
 
@@ -122,9 +118,6 @@
                         </form>
                     </div>
                 </div>
-                <!-- Penutup else kondisi permasalahan null atau tidak -->
-                <?php } ?>
-                <!-- Penutup else kondisi permasalahan null atau tidak -->
                </div>
             </div>
          </div>
