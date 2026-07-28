@@ -60,9 +60,11 @@ class Diskusi extends CI_Controller {
 					'id_user'	 	  => $this->input->post('id_user'),
                     'id_pertemuan'	  => $this->input->post('id_pertemuan'),
                     'komentar'	      => $this->input->post('komentar'),
-					'created_at' 	  => date('Y-m-d H:i:s')
+					// Diisi manual dari form; kalau dikosongkan, pakai waktu sekarang.
+					'created_at' 	  => $this->_toDatetime($this->input->post('created_at'), date('Y-m-d H:i:s')),
+					'updated_at' 	  => $this->_toDatetime($this->input->post('updated_at'), NULL)
 			);
-            
+
             $this->M_diskusi->tambahdata($data);
 			$this->session->set_flashdata('ver', 'FALSE');
 			$this->session->set_flashdata('class_alert', 'info');
@@ -130,7 +132,10 @@ class Diskusi extends CI_Controller {
                 'id_user'	      => $this->input->post('id_user'),
                 'id_pertemuan'	  => $this->input->post('id_pertemuan'),
                 'komentar'	      => $this->input->post('komentar'),
-				'updated_at'      =>date('Y-m-d H:i:s')
+				// Keduanya bisa diubah manual dari form. "Terakhir Diubah" yang
+				// dikosongkan tetap dicatat otomatis ke waktu sekarang.
+				'created_at'      => $this->_toDatetime($this->input->post('created_at'), NULL),
+				'updated_at'      => $this->_toDatetime($this->input->post('updated_at'), date('Y-m-d H:i:s'))
 			);
 
 			$this->M_diskusi->update($id, $data);
@@ -148,6 +153,22 @@ class Diskusi extends CI_Controller {
 			$this->load->view('guru/diskusi/v_edit_diskusi',$data);
 			$this->form_validation->set_message('insert');
 		}
+	}
+
+	/**
+	 * Input <input type="datetime-local"> mengirim format "Y-m-d\TH:i" yang tidak
+	 * dikenali MySQL, jadi diubah dulu ke "Y-m-d H:i:s". Kalau kosong / tidak
+	 * valid, pakai $fallback (bisa NULL supaya kolomnya dibiarkan kosong).
+	 */
+	private function _toDatetime($value, $fallback = NULL)
+	{
+		$value = trim((string) $value);
+		if ($value === '') { return $fallback; }
+
+		$ts = strtotime($value);
+		if ($ts === FALSE) { return $fallback; }
+
+		return date('Y-m-d H:i:s', $ts);
 	}
 
 	public function validate(){
