@@ -112,9 +112,26 @@
                                         </div>
                                     </div>
                                     <?= form_error("komentar",
-                                            "<div class='alert alert-danger alert-dismissible' role='alert'>", 
+                                            "<div class='alert alert-danger alert-dismissible' role='alert'>",
                                             "<button type='button' class='btn-close' data-bs-dismiss='alert' aria-label='Close'></button>
                                             </div>")?>
+
+                                    <!-- Created At / Updated At (read-only, terisi otomatis oleh sistem saat disimpan) -->
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                <label>Dibuat Pada</label>
+                                                <input type="text" class="form-control" value="Akan diisi otomatis saat disimpan" disabled>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                <label>Terakhir Diubah</label>
+                                                <input type="text" class="form-control" value="-" disabled>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <small class="text-muted d-block mb-3">Kolom ini terisi otomatis oleh sistem, tidak perlu diisi manual.</small>
 
                                     <!-- Submit button -->
                                     <button class="btn btn-primary waves-effect" type="submit">SUBMIT</button>
