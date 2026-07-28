@@ -117,22 +117,23 @@
                                             "<button type='button' class='btn-close' data-bs-dismiss='alert' aria-label='Close'></button>
                                             </div>")?>
 
-                                    <!-- Created At / Updated At (read-only, terisi otomatis oleh sistem) -->
+                                    <!-- Created At / Updated At (bisa diisi & diubah manual) -->
                                     <div class="row">
                                         <div class="col-md-6">
                                             <div class="form-group">
-                                                <label>Dibuat Pada</label>
-                                                <input type="text" class="form-control" value="<?= $dataById->created_at ? date('d/m/Y H:i', strtotime($dataById->created_at)) : '-'?>" disabled>
+                                                <label for="created_at">Dibuat Pada</label>
+                                                <input type="datetime-local" class="form-control" id="created_at" name="created_at" value="<?= $dataById->created_at ? date('Y-m-d\TH:i', strtotime($dataById->created_at)) : ''?>">
+                                                <small class="text-muted">Kosongkan bila tidak ingin mencatat waktu dibuat.</small>
                                             </div>
                                         </div>
                                         <div class="col-md-6">
                                             <div class="form-group">
-                                                <label>Terakhir Diubah</label>
-                                                <input type="text" class="form-control" value="<?= $dataById->updated_at ? date('d/m/Y H:i', strtotime($dataById->updated_at)) : '-'?>" disabled>
+                                                <label for="updated_at">Terakhir Diubah</label>
+                                                <input type="datetime-local" class="form-control" id="updated_at" name="updated_at" value="<?= $dataById->updated_at ? date('Y-m-d\TH:i', strtotime($dataById->updated_at)) : ''?>">
+                                                <small class="text-muted">Kosongkan untuk otomatis memakai waktu sekarang.</small>
                                             </div>
                                         </div>
                                     </div>
-                                    <small class="text-muted d-block mb-3">Kolom ini terisi otomatis oleh sistem. "Terakhir Diubah" akan diperbarui ke waktu sekarang begitu Anda menyimpan perubahan ini.</small>
 
                                     <!-- Submit button -->
                                     <button class="btn btn-primary waves-effect" type="submit">SUBMIT</button>
