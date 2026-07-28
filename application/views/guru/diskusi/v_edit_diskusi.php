@@ -113,9 +113,27 @@
                                         </div>
                                     </div>
                                     <?= form_error("komentar",
-                                            "<div class='alert alert-danger alert-dismissible' role='alert'>", 
+                                            "<div class='alert alert-danger alert-dismissible' role='alert'>",
                                             "<button type='button' class='btn-close' data-bs-dismiss='alert' aria-label='Close'></button>
                                             </div>")?>
+
+                                    <!-- Created At / Updated At (bisa diisi & diubah manual) -->
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                <label for="created_at">Dibuat Pada</label>
+                                                <input type="datetime-local" class="form-control" id="created_at" name="created_at" value="<?= $dataById->created_at ? date('Y-m-d\TH:i', strtotime($dataById->created_at)) : ''?>">
+                                                <small class="text-muted">Kosongkan bila tidak ingin mencatat waktu dibuat.</small>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                <label for="updated_at">Terakhir Diubah</label>
+                                                <input type="datetime-local" class="form-control" id="updated_at" name="updated_at" value="<?= $dataById->updated_at ? date('Y-m-d\TH:i', strtotime($dataById->updated_at)) : ''?>">
+                                                <small class="text-muted">Kosongkan untuk otomatis memakai waktu sekarang.</small>
+                                            </div>
+                                        </div>
+                                    </div>
 
                                     <!-- Submit button -->
                                     <button class="btn btn-primary waves-effect" type="submit">SUBMIT</button>
