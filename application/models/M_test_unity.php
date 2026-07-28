@@ -363,6 +363,180 @@
 		}
 
 		/**
+		 * Ringkasan kartu per kelompok untuk kelompok, tapi DI-SCOPE ke satu
+		 * test_type saja (dipakai halaman "Per Jenis Tes" setelah memilih
+		 * pretest/posttest). Baris dengan test_type lain tidak ikut dihitung.
+		 */
+		public function getKelompokCardsByTestType($test_type, $filters = array()) {
+			$test_type = self::_normalizeTestType($test_type);
+			$cards = $this->getKelompokCards($filters);
+			if (empty($cards)) return array();
+
+			$kelompokKeys = array_column($cards, 'no_kelompok');
+			$this->db->select('u.no_kelompok, tu.practice, tu.pertanyaan, tu.jawaban, tu.nilai');
+			$this->db->from('tb_test_unity tu');
+			$this->db->join('tb_user u', 'u.id_user = tu.id_user');
+			$this->db->where_in('u.no_kelompok', $kelompokKeys);
+			$this->_whereTestTypeEquals($test_type);
+			$answerRows = $this->db->get()->result();
+
+			$soalPerKelompok = array();
+			$terisiPerKelompok = array();
+			$dinilaiPerKelompok = array();
+			$nilaiAgg = array();
+			foreach ($answerRows as $a) {
+				$k = $a->no_kelompok;
+				$key = self::normalizePractice($a->practice) . "\x1f" . $a->pertanyaan;
+				$soalPerKelompok[$k][$key] = TRUE;
+				if ($a->jawaban !== NULL && $a->jawaban !== '') $terisiPerKelompok[$k][$key] = TRUE;
+				if ($a->nilai !== NULL) {
+					$dinilaiPerKelompok[$k][$key] = TRUE;
+					if (!isset($nilaiAgg[$k])) $nilaiAgg[$k] = array('sum' => 0, 'count' => 0);
+					$nilaiAgg[$k]['sum'] += (float) $a->nilai;
+					$nilaiAgg[$k]['count']++;
+				}
+			}
+
+			$result = array();
+			foreach ($cards as $c) {
+				$k = $c['no_kelompok'];
+				$totalSoal = isset($soalPerKelompok[$k]) ? count($soalPerKelompok[$k]) : 0;
+				if ($totalSoal === 0) continue; // kelompok ini belum sentuh test_type ini sama sekali
+				$nilaiCount = isset($nilaiAgg[$k]) ? $nilaiAgg[$k]['count'] : 0;
+				$nilaiSum   = isset($nilaiAgg[$k]) ? $nilaiAgg[$k]['sum']   : 0;
+				$result[] = array(
+					'no_kelompok'    => $k,
+					'angkatan'       => $c['angkatan'],
+					'members'        => $c['members'],
+					'jumlah_anggota' => $c['jumlah_anggota'],
+					'total_soal'     => $totalSoal,
+					'terisi'         => isset($terisiPerKelompok[$k]) ? count($terisiPerKelompok[$k]) : 0,
+					'dinilai'        => isset($dinilaiPerKelompok[$k]) ? count($dinilaiPerKelompok[$k]) : 0,
+					'rata_nilai'     => $nilaiCount ? round($nilaiSum / $nilaiCount, 1) : NULL,
+				);
+			}
+
+			return $result;
+		}
+
+		/**
+		 * Ringkasan agregat per jenis tes (pretest/posttest) untuk halaman landing
+		 * "Per Jenis Tes": berapa kelompok/siswa terlibat, berapa soal sudah
+		 * dinilai, dan rata-rata nilai keseluruhan.
+		 */
+		public function getTestTypeSummary($filters = array()) {
+			$angkatan = !empty($filters['angkatan']) ? $filters['angkatan'] : NULL;
+
+			$this->db->select('id_user, no_kelompok');
+			$this->db->where('id_role_user', 1);
+			$this->db->where('no_kelompok IS NOT NULL');
+			$this->db->where('no_kelompok !=', '');
+			if ($angkatan) $this->db->where('angkatan', $angkatan);
+			$members = $this->db->get('tb_user')->result();
+			if (empty($members)) {
+				return array(
+					'pretest'  => array('jumlah_kelompok' => 0, 'jumlah_siswa' => 0, 'total_soal' => 0, 'dinilai' => 0, 'rata_nilai' => NULL),
+					'posttest' => array('jumlah_kelompok' => 0, 'jumlah_siswa' => 0, 'total_soal' => 0, 'dinilai' => 0, 'rata_nilai' => NULL),
+				);
+			}
+			$memberIds = array_map(function($m) { return (int) $m->id_user; }, $members);
+			$userToKelompok = array();
+			foreach ($members as $m) { $userToKelompok[$m->id_user] = $m->no_kelompok; }
+
+			$this->db->select('id_user, practice, pertanyaan, test_type, jawaban, nilai');
+			$this->db->where_in('id_user', $memberIds);
+			$this->db->where('test_type IS NOT NULL');
+			$rows = $this->db->get('tb_test_unity')->result();
+
+			$agg = array(
+				'pretest'  => array('kelompok' => array(), 'siswa' => array(), 'soal' => array(), 'dinilai' => 0, 'sum' => 0, 'count' => 0),
+				'posttest' => array('kelompok' => array(), 'siswa' => array(), 'soal' => array(), 'dinilai' => 0, 'sum' => 0, 'count' => 0),
+			);
+			foreach ($rows as $r) {
+				if (!isset($agg[$r->test_type])) continue;
+				$k = isset($userToKelompok[$r->id_user]) ? $userToKelompok[$r->id_user] : NULL;
+				if ($k === NULL) continue;
+				$agg[$r->test_type]['kelompok'][$k] = TRUE;
+				$agg[$r->test_type]['siswa'][$r->id_user] = TRUE;
+				$agg[$r->test_type]['soal'][self::normalizePractice($r->practice) . "\x1f" . $r->pertanyaan] = TRUE;
+				if ($r->nilai !== NULL) {
+					$agg[$r->test_type]['dinilai']++;
+					$agg[$r->test_type]['sum'] += (float) $r->nilai;
+					$agg[$r->test_type]['count']++;
+				}
+			}
+
+			$result = array();
+			foreach (array('pretest', 'posttest') as $tt) {
+				$result[$tt] = array(
+					'jumlah_kelompok' => count($agg[$tt]['kelompok']),
+					'jumlah_siswa'    => count($agg[$tt]['siswa']),
+					'total_soal'      => count($agg[$tt]['soal']),
+					'dinilai'         => $agg[$tt]['dinilai'],
+					'rata_nilai'      => $agg[$tt]['count'] ? round($agg[$tt]['sum'] / $agg[$tt]['count'], 1) : NULL,
+				);
+			}
+			return $result;
+		}
+
+		/**
+		 * Perbandingan rata-rata nilai Pretest vs Posttest per kelompok, untuk
+		 * tabel rekap di halaman landing "Per Jenis Tes" -- supaya dosen bisa
+		 * lihat progres belajar tanpa harus buka satu-satu kelompok.
+		 */
+		public function getKelompokComparison($filters = array()) {
+			$angkatan = !empty($filters['angkatan']) ? $filters['angkatan'] : NULL;
+
+			$this->db->select('id_user, no_kelompok, angkatan');
+			$this->db->where('id_role_user', 1);
+			$this->db->where('no_kelompok IS NOT NULL');
+			$this->db->where('no_kelompok !=', '');
+			if ($angkatan) $this->db->where('angkatan', $angkatan);
+			$members = $this->db->get('tb_user')->result();
+			if (empty($members)) return array();
+
+			$userToKelompok = array();
+			$kelompokAngkatan = array();
+			foreach ($members as $m) {
+				$userToKelompok[$m->id_user] = $m->no_kelompok;
+				$kelompokAngkatan[$m->no_kelompok] = $m->angkatan;
+			}
+			$memberIds = array_keys($userToKelompok);
+
+			$this->db->select('id_user, test_type, nilai');
+			$this->db->where_in('id_user', $memberIds);
+			$this->db->where('test_type IS NOT NULL');
+			$this->db->where('nilai IS NOT NULL');
+			$rows = $this->db->get('tb_test_unity')->result();
+
+			$agg = array(); // [kelompok][test_type] = ['sum'=>x,'count'=>y]
+			foreach ($rows as $r) {
+				$k = isset($userToKelompok[$r->id_user]) ? $userToKelompok[$r->id_user] : NULL;
+				if ($k === NULL) continue;
+				if (!isset($agg[$k][$r->test_type])) $agg[$k][$r->test_type] = array('sum' => 0, 'count' => 0);
+				$agg[$k][$r->test_type]['sum']   += (float) $r->nilai;
+				$agg[$k][$r->test_type]['count']++;
+			}
+
+			$result = array();
+			foreach ($agg as $k => $byType) {
+				$ratePre  = isset($byType['pretest'])  && $byType['pretest']['count']  ? round($byType['pretest']['sum']  / $byType['pretest']['count'],  1) : NULL;
+				$ratePost = isset($byType['posttest']) && $byType['posttest']['count'] ? round($byType['posttest']['sum'] / $byType['posttest']['count'], 1) : NULL;
+				$result[] = array(
+					'no_kelompok'   => $k,
+					'angkatan'      => isset($kelompokAngkatan[$k]) ? $kelompokAngkatan[$k] : NULL,
+					'rata_pretest'  => $ratePre,
+					'rata_posttest' => $ratePost,
+					'delta'         => ($ratePre !== NULL && $ratePost !== NULL) ? round($ratePost - $ratePre, 1) : NULL,
+				);
+			}
+
+			usort($result, function($a, $b) { return strnatcmp($a['no_kelompok'], $b['no_kelompok']); });
+
+			return $result;
+		}
+
+		/**
 		 * Daftar soal (dikelompokkan per practice, dipisah pretest/posttest) untuk
 		 * satu kelompok, lengkap dengan status "berapa anggota sudah menjawab /
 		 * sudah dinilai".
