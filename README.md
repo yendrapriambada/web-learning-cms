@@ -13,12 +13,14 @@ Aplikasi memiliki dua portal terpisah:
 
 Login mendukung autentikasi biasa dan **Google OAuth**.
 
-Dokumen serah terima proyek dan dokumentasi teknis sistem (fitur, sitemap,
-alur penggunaan, skema basis data) tersedia dalam format Word di folder
-`docs/`:
+Dokumen proyek untuk klien tersedia dalam format Word di folder `docs/`:
 
-- [docs/Surat_Serah_Terima_Proyek.docx](docs/Surat_Serah_Terima_Proyek.docx)
-- [docs/Dokumentasi_Teknis_As_Built.docx](docs/Dokumentasi_Teknis_As_Built.docx)
+- [docs/Surat_Serah_Terima_Proyek.docx](docs/Surat_Serah_Terima_Proyek.docx) — surat pengantar serah terima
+- [docs/BAST_Berita_Acara_Serah_Terima.docx](docs/BAST_Berita_Acara_Serah_Terima.docx) — berita acara serah terima resmi (perlu tanda tangan kedua pihak)
+- [docs/Dokumentasi_Teknis_As_Built.docx](docs/Dokumentasi_Teknis_As_Built.docx) — fitur, sitemap, alur penggunaan, skema basis data
+- [docs/Panduan_Pengguna_User_Guide.docx](docs/Panduan_Pengguna_User_Guide.docx) — panduan penggunaan untuk guru & siswa
+- [docs/UAT_User_Acceptance_Test.docx](docs/UAT_User_Acceptance_Test.docx) — skenario uji terima untuk ditandatangani klien
+- [docs/Vulnerability_Assessment.docx](docs/Vulnerability_Assessment.docx) — penilaian keamanan tingkat kode (bukan pentest)
 
 ## Fitur Utama
 
