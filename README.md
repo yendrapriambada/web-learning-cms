@@ -21,6 +21,7 @@ Dokumen proyek untuk klien tersedia dalam format Word di folder `docs/`:
 - [docs/Panduan_Pengguna_User_Guide.docx](docs/Panduan_Pengguna_User_Guide.docx) — panduan penggunaan untuk guru & siswa
 - [docs/UAT_User_Acceptance_Test.docx](docs/UAT_User_Acceptance_Test.docx) — skenario uji terima untuk ditandatangani klien
 - [docs/Vulnerability_Assessment.docx](docs/Vulnerability_Assessment.docx) — penilaian keamanan tingkat kode (bukan pentest)
+- [docs/Daftar_Kredensial_Akses.docx](docs/Daftar_Kredensial_Akses.docx) — checklist kredensial yang harus diserahkan (**sengaja kosong** — lihat catatan di dalamnya soal kanal pengiriman yang aman; jangan pernah isi nilai kredensial asli lalu commit ke repo ini)
 
 ## Fitur Utama
 
