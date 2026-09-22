@@ -13,14 +13,17 @@ Aplikasi memiliki dua portal terpisah:
 
 Login mendukung autentikasi biasa dan **Google OAuth**.
 
-Dokumen proyek untuk klien tersedia dalam format Word di folder `docs/`:
+Dokumen proyek untuk klien tersedia dalam format Word (beberapa juga PDF)
+di folder `docs/`. **Folder ini dikecualikan dari auto-deploy** (lihat
+[.github/workflows](.github/workflows/)) — isinya tidak pernah ikut naik
+ke server production:
 
-- [docs/Surat_Serah_Terima_Proyek.docx](docs/Surat_Serah_Terima_Proyek.docx) — surat pengantar serah terima
-- [docs/BAST_Berita_Acara_Serah_Terima.docx](docs/BAST_Berita_Acara_Serah_Terima.docx) — berita acara serah terima resmi (perlu tanda tangan kedua pihak)
-- [docs/Dokumentasi_Teknis_As_Built.docx](docs/Dokumentasi_Teknis_As_Built.docx) — fitur, sitemap, alur penggunaan, skema basis data
-- [docs/Panduan_Pengguna_User_Guide.docx](docs/Panduan_Pengguna_User_Guide.docx) — panduan penggunaan untuk guru & siswa
+- [docs/BAST_Berita_Acara_Serah_Terima.docx](docs/BAST_Berita_Acara_Serah_Terima.docx) — berita acara serah terima resmi (perlu tanda tangan kedua pihak) (+ [PDF](docs/BAST_Berita_Acara_Serah_Terima.pdf))
+- [docs/Dokumentasi_Teknis_As_Built.docx](docs/Dokumentasi_Teknis_As_Built.docx) — fitur, sitemap, alur penggunaan, skema basis data (+ [PDF](docs/Dokumentasi_Teknis_As_Built.pdf))
+- [docs/Panduan_Pengguna_User_Guide.docx](docs/Panduan_Pengguna_User_Guide.docx) — panduan penggunaan untuk guru & siswa (+ [PDF](docs/Panduan_Pengguna_User_Guide.pdf))
 - [docs/UAT_User_Acceptance_Test.docx](docs/UAT_User_Acceptance_Test.docx) — skenario uji terima untuk ditandatangani klien
 - [docs/Vulnerability_Assessment.docx](docs/Vulnerability_Assessment.docx) — penilaian keamanan tingkat kode (bukan pentest)
+- [docs/Laporan_Remediasi_Keamanan.docx](docs/Laporan_Remediasi_Keamanan.docx) — status tindak lanjut atas temuan di atas
 - [docs/Daftar_Kredensial_Akses.docx](docs/Daftar_Kredensial_Akses.docx) — checklist kredensial yang harus diserahkan (**sengaja kosong** — lihat catatan di dalamnya soal kanal pengiriman yang aman; jangan pernah isi nilai kredensial asli lalu commit ke repo ini)
 
 ## Fitur Utama
@@ -73,7 +76,8 @@ Akses di `http://localhost:8080/`, login di `http://localhost:8080/login`.
 Aplikasi di-deploy otomatis ke hosting cPanel melalui GitHub Actions setiap
 kali ada push ke branch `main` — lihat
 [.github/workflows](.github/workflows/) (FTP deploy, mengecualikan folder
-`assets*`, `application/cache`, `application/logs`).
+`assets*`, `application/cache`, `application/logs`, dan **`docs/`** —
+dokumen internal klien tidak pernah ikut ter-deploy ke server production).
 
 ## Struktur Direktori Penting
 

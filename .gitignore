@@ -39,3 +39,5 @@ user_guide_src/cilexer/pycilexer.egg-info/*
 /assets/jawaban_gambar/
 /assets/soal/
 /assets/sumber_belajar/
+# Word/Office temporary lock files
+~$*
