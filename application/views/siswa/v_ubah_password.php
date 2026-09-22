@@ -51,6 +51,7 @@
                     </div>
                     <div class="card-body">
                         <form id="form_advanced_validation" method="POST" action="<?= base_url().'siswa/UbahKataSandi/do_edit'?>">
+                            <input type="hidden" name="<?= $this->security->get_csrf_token_name() ?>" value="<?= $this->security->get_csrf_hash() ?>">
 
                             <!-- ID USer -->
                             <input type="hidden" name="id_user" value="<?= $this->session->userdata('id_user')?>">

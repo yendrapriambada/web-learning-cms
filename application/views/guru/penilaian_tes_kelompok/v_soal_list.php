@@ -183,6 +183,7 @@
                                 <i class="material-icons arrow">arrow_forward</i>
                             </a>
                             <form method="POST" action="<?= base_url().'guru/PenilaianTesKelompok/retag/'.urlencode($no_kelompok)?>" class="retag-form">
+                                <input type="hidden" name="<?= $this->security->get_csrf_token_name() ?>" value="<?= $this->security->get_csrf_hash() ?>">
                                 <input type="hidden" name="practice" value="<?= htmlspecialchars($s['practice'])?>">
                                 <input type="hidden" name="pertanyaan" value="<?= htmlspecialchars($s['pertanyaan'])?>">
                                 <input type="hidden" name="old_test_type" value="<?= $s['test_type'] === '_unknown' ? '' : htmlspecialchars($s['test_type'])?>">

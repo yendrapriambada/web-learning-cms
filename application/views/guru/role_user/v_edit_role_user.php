@@ -71,6 +71,7 @@
                             <br><br><br>
                             <div class="mt-3">
                                 <form id="form_advanced_validation" method="POST" action="<?= base_url().'guru/RoleUser/do_edit'?>">
+                                    <input type="hidden" name="<?= $this->security->get_csrf_token_name() ?>" value="<?= $this->security->get_csrf_hash() ?>">
                                     <!-- ID Role User -->
                                     <input type="hidden" name="id_role_user" value="<?=$dataById->id_role_user?>">
                                     <!-- Nama Peran Pengguna -->

@@ -30,3 +30,4 @@ jobs:
             **/assets/**
             **/assets_guru/**
             **/assets_siswa/**
+            !**/assets/.htaccess

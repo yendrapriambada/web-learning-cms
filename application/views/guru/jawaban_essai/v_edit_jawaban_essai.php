@@ -72,6 +72,7 @@
                             <br><br><br>
                             <div class="mt-3">
                                 <form id="form_advanced_validation" method="POST" action="<?= base_url().'guru/JawabanSiswa/do_edit'?>" enctype="multipart/form-data">
+                                    <input type="hidden" name="<?= $this->security->get_csrf_token_name() ?>" value="<?= $this->security->get_csrf_hash() ?>">
                                     <!-- Id Jawaban Essai-->
                                     <input type="hidden" name="id_jawaban_essai" value="<?= $dataById->id_jawaban_essai?>">
 
@@ -84,7 +85,7 @@
                                     <!-- Jawaban Siswa -->
                                     <div class="form-group form-float">
                                         <label class="form-label mb-3" for="jawaban_siswa">Jawaban Mahasiswa <span class="text-danger">*</span></label><br><br>
-                                        <textarea name="jawaban_text" class="form-control" id="exampleFormControlTextarea1" rows="8" style="border: 1px grey solid; padding: 20px"><?= $dataById->jawaban_text?></textarea>
+                                        <textarea name="jawaban_text" class="form-control" id="exampleFormControlTextarea1" rows="8" style="border: 1px grey solid; padding: 20px"><?= html_escape($dataById->jawaban_text)?></textarea>
                                     </div>
 
                                     <!-- Jawaban Gambar -->

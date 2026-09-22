@@ -100,6 +100,7 @@
                             </div>
 
                             <form method="POST" action="<?= base_url().'guru/PenilaianTesKelompok/do_bulk_soal'?>">
+                                <input type="hidden" name="<?= $this->security->get_csrf_token_name() ?>" value="<?= $this->security->get_csrf_hash() ?>">
                                 <input type="hidden" name="no_kelompok" value="<?= htmlspecialchars($no_kelompok)?>">
                                 <input type="hidden" name="soal_key" value="<?= $soal_key?>">
                                 <input type="hidden" name="indikator_soal" value="<?= htmlspecialchars($soal['indikator_soal'])?>">

@@ -50,10 +50,10 @@ class Pengguna extends CI_Controller {
         $konfirmasiPassword = $this->input->post('konfirmasi_password');
         // Periksa apakah konfirmasiPassword tidak null dan bukan string kosong
         if (!empty($konfirmasiPassword)) {
-            $md5KP = md5($konfirmasiPassword);
+            $md5KP = password_hash($konfirmasiPassword, PASSWORD_BCRYPT);
         } else {
             $md5KP = null;
-            log_message('error', 'Konfirmasi password untuk md5() kosong atau null.');
+            log_message('error', 'Konfirmasi password kosong atau null.');
             // Anda mungkin ingin mengatur pesan kesalahan atau mengarahkan ulang pengguna
             // Redirect atau set error message
             redirect('guru/Pengguna/create');

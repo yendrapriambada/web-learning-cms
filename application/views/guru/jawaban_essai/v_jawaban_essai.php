@@ -208,7 +208,7 @@
                                                 <td class="align-top"><?= $JE->tahapan_pembelajaran?></td>
                                                 <td class="text-center align-top"><?= $JE->no_soal?></td>
                                                 <td class="text-center align-top">
-                                                    <p><?= $JE->jawaban_text?></p>
+                                                    <p><?= html_escape($JE->jawaban_text)?></p>
                                                     <?php if ($JE->jawaban_gambar  != NULL) { ?>
                                                         <a href="<?= base_url().'assets/jawaban_gambar/'.$JE->jawaban_gambar ?>" target="_blank"><?= base_url().'assets/jawaban_gambar/'.$JE->jawaban_gambar ?></a>
                                                     <?php } ?>
@@ -251,7 +251,7 @@
                                                         <p><?= $JE->deksripsi_soal?></p>
                                                         <hr>
                                                         <h4><b>Jawaban</b></h4>
-                                                        <p><?= $JE->jawaban_text?></p>
+                                                        <p><?= html_escape($JE->jawaban_text)?></p>
 
                                                         <?php if ($JE->jawaban_gambar != NULL && $JE->jawaban_gambar != '') { ?>
                                                         <img class="rounded" src="<?= base_url().'assets/jawaban_gambar/'.$JE->jawaban_gambar ?>" width="90%" alt="" srcset="">

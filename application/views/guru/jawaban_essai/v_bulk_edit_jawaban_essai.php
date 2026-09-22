@@ -87,6 +87,7 @@
 
             <!-- Form bulk edit -->
             <form method="POST" action="<?= base_url().'guru/JawabanSiswa/do_bulk_edit'?>" enctype="multipart/form-data">
+                <input type="hidden" name="<?= $this->security->get_csrf_token_name() ?>" value="<?= $this->security->get_csrf_hash() ?>">
                 <input type="hidden" name="no_kelompok" value="<?= htmlspecialchars($no_kelompok)?>">
 
                 <?php

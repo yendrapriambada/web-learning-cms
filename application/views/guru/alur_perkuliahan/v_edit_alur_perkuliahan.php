@@ -72,6 +72,7 @@
                             <br><br><br>
                             <div class="mt-3">
                                 <form id="form_advanced_validation" method="POST" action="<?= base_url().'guru/AlurPerkuliahan/do_edit'?>">
+                                    <input type="hidden" name="<?= $this->security->get_csrf_token_name() ?>" value="<?= $this->security->get_csrf_hash() ?>">
                                     <!-- Id Alur Pembelajaran -->
                                      <input type="hidden" name="id_alur_pembelajaran" value="<?= $dataById->id_alur_pembelajaran?>">
 

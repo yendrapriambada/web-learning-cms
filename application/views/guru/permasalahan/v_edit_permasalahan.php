@@ -72,6 +72,7 @@
                             <br><br><br>
                             <div class="mt-3">
                                 <form id="form_advanced_validation" method="POST" action="<?= base_url().'guru/Permasalahan/do_edit'?>" enctype="multipart/form-data">
+                                    <input type="hidden" name="<?= $this->security->get_csrf_token_name() ?>" value="<?= $this->security->get_csrf_hash() ?>">
                                     <!-- Id Pertemuan -->
                                     <input type="hidden" name="id_permasalahan" value="<?= $dataById->id_permasalahan?>">
 

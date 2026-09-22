@@ -74,7 +74,7 @@
                                     </div>
                                     <div class="message-content">
                                         <div>
-                                            <?= $d->komentar?>
+                                            <?= html_escape($d->komentar)?>
                                         </div>
                                         <br>
                                         <div class="time-right"><?= $d->created_at?></div>
@@ -87,7 +87,7 @@
                                     </div>
                                     <div class="message-content">
                                         <div>
-                                            <?= $d->komentar?>
+                                            <?= html_escape($d->komentar)?>
                                         </div>
                                         <br>
                                         <div class="time-left"><?= $d->created_at?></div>
@@ -100,6 +100,7 @@
                     <div class="chat-footer">
                         <p><b>Tambahkan Komentar Baru</b></p>
                         <form id="form_advanced_validation" method="POST" action="<?= base_url().'siswa/Diskusi/do_create_review'?>">
+                            <input type="hidden" name="<?= $this->security->get_csrf_token_name() ?>" value="<?= $this->security->get_csrf_hash() ?>">
                             <input type="hidden" name="id_pertemuan" value="<?= $pertemuanById->id_pertemuan?>">
 
                             <!-- Komentar -->

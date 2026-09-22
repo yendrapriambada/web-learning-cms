@@ -57,6 +57,7 @@
                     </div>
                     <div class="card-body">
                         <form id="form_advanced_validation" method="POST" action="<?= base_url().'siswa/Profil/do_edit_foto_profil'?>" enctype="multipart/form-data">
+                            <input type="hidden" name="<?= $this->security->get_csrf_token_name() ?>" value="<?= $this->security->get_csrf_hash() ?>">
                             <!-- ID USer -->
                             <input type="hidden" name="id_user" value="<?= $dataById->id_user?>">
 
