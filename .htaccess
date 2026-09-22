@@ -1,3 +1,24 @@
+# Set environment ke production di server live agar pesan error PHP mentah
+# tidak ditampilkan ke pengunjung (lihat index.php: define('ENVIRONMENT', ...)).
+# Untuk pengembangan lokal, override via environment variable OS/vhost, JANGAN
+# hapus baris ini di server produksi.
+<IfModule mod_env.c>
+  SetEnv CI_ENV production
+  # Opsional, disarankan: aktifkan baris di bawah dengan key acak Anda sendiri
+  # (generate via: php -r "echo bin2hex(random_bytes(32));"), JANGAN commit
+  # key asli ke Git.
+  # SetEnv CI_ENCRYPTION_KEY ganti-dengan-key-acak-64-hex-karakter
+
+  # Kredensial database produksi (lihat application/config/database.php).
+  # Isi dengan kredensial ASLI hanya di server, JANGAN pernah commit nilai
+  # asli ke Git. Setelah rotasi password (wajib, lihat laporan serah terima),
+  # isi baris-baris di bawah lalu hapus tanda pagar (#).
+  # SetEnv DB_HOSTNAME localhost
+  # SetEnv DB_USERNAME ganti-dengan-username-db-produksi
+  # SetEnv DB_PASSWORD ganti-dengan-password-db-produksi-yang-baru
+  # SetEnv DB_DATABASE ipar7647_db_ipa_terpadu
+</IfModule>
+
 <IfModule mod_rewrite.c>
   RewriteEngine on
   RewriteCond %{REQUEST_FILENAME} !-f

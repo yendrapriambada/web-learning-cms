@@ -72,6 +72,7 @@
 
                             <!-- Pertemuan -->
                             <form id="form_advanced_validation" method="POST" action="<?= base_url().'guru/Diskusi/do_pilih_review_diskusi'?>">
+                                <input type="hidden" name="<?= $this->security->get_csrf_token_name() ?>" value="<?= $this->security->get_csrf_hash() ?>">
                                 <!-- Pertemuan -->
                                 <div class="form-group">
                                     <div class="form-line">

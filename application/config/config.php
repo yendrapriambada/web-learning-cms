@@ -332,7 +332,11 @@ $config['cache_query_string'] = FALSE;
 | https://codeigniter.com/userguide3/libraries/encryption.html
 |
 */
-$config['encryption_key'] = '';
+// Diambil dari environment variable, BUKAN hardcoded, agar key rahasia
+// tidak pernah ikut ter-commit ke Git (lihat Vulnerability Assessment,
+// Temuan #3 & #7). Set via SetEnv CI_ENCRYPTION_KEY di .htaccess/vhost
+// server produksi. Generate key baru dengan: bin2hex(random_bytes(32))
+$config['encryption_key'] = getenv('CI_ENCRYPTION_KEY') ?: '';
 
 /*
 |--------------------------------------------------------------------------
@@ -463,12 +467,15 @@ $config['global_xss_filtering'] = FALSE;
 | 'csrf_regenerate' = Regenerate token on every submission
 | 'csrf_exclude_uris' = Array of URIs which ignore CSRF checks
 */
-$config['csrf_protection'] = FALSE;
-$config['csrf_token_name'] = 'csrf_test_name';
+$config['csrf_protection'] = TRUE;
+$config['csrf_token_name'] = 'csrf_token';
 $config['csrf_cookie_name'] = 'csrf_cookie_name';
 $config['csrf_expire'] = 7200;
 $config['csrf_regenerate'] = TRUE;
-$config['csrf_exclude_uris'] = array();
+// Login/google_signin dikecualikan karena permintaan POST datang langsung
+// dari skrip Google Identity Services (bukan dari form halaman kita), dan
+// sudah diverifikasi sendiri melalui Google tokeninfo endpoint.
+$config['csrf_exclude_uris'] = array('Login/google_signin');
 
 /*
 |--------------------------------------------------------------------------

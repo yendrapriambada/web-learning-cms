@@ -149,7 +149,7 @@
                                                     <p><?= $JE->deksripsi_soal?></p>
                                                     <hr>
                                                     <h4><b>Jawaban</b></h4>
-                                                    <p><?= $JE->jawaban_text?></p>
+                                                    <p><?= html_escape($JE->jawaban_text)?></p>
 
                                                     <?php if ($JE->jawaban_gambar != NULL && $JE->jawaban_gambar != '') { ?>
                                                     <img class="rounded" src="<?= base_url().'assets/jawaban_gambar/'.$JE->jawaban_gambar ?>" width="90%" alt="" srcset="">

@@ -9,6 +9,31 @@ class Login extends CI_Controller {
 		$this->load->model("M_pertemuan","",TRUE);
 	}
 
+	/**
+	 * Verifikasi password terhadap hash yang tersimpan.
+	 * Mendukung hash bcrypt (password_hash) maupun hash MD5 lama (legacy).
+	 * Bila akun masih memakai MD5 lama dan passwordnya benar, hash otomatis
+	 * di-upgrade ke bcrypt agar migrasi berjalan bertahap tanpa memaksa
+	 * seluruh pengguna reset password sekaligus.
+	 */
+	private function verifyPassword($plainPassword, $storedHash, $idUser)
+	{
+		if (password_get_info($storedHash)['algo'] !== null) {
+			return password_verify($plainPassword, $storedHash);
+		}
+
+		// Legacy: hash MD5 tanpa salt.
+		if (hash_equals($storedHash, md5($plainPassword))) {
+			$this->M_user->update($idUser, array(
+				'password'   => password_hash($plainPassword, PASSWORD_BCRYPT),
+				'updated_at' => date('Y-m-d H:i:s'),
+			));
+			return true;
+		}
+
+		return false;
+	}
+
 	public function index()
 	{
 		$data['pertemuan'] = $this->M_pertemuan->getRecordsView();
@@ -19,7 +44,6 @@ class Login extends CI_Controller {
 	{
 		$dataById=$this->M_user->tampil_view_by_id($data->id_user);
 		$this->session->set_userdata('username', $dataById->username);
-		$this->session->set_userdata('password', $dataById->password);
 		$this->session->set_userdata('id_user', $dataById->id_user);
 		$this->session->set_userdata('id_role_user', $dataById->id_role_user);
 		$this->session->set_userdata('nama_lengkap', $dataById->nama_lengkap);
@@ -67,7 +91,7 @@ class Login extends CI_Controller {
 			if($valid_user->num_rows() > 0)
 			{
 				$data = $valid_user->row();
-				if ($data->password == md5($password)) {
+				if ($this->verifyPassword($password, $data->password, $data->id_user)) {
 					$this->setSession($data);
 				} else {
 					$this->session->set_flashdata('logged_in', '0');
@@ -83,7 +107,7 @@ class Login extends CI_Controller {
 				if($valid_user->num_rows() > 0)
 				{
 					$data = $valid_user->row();
-					if ($data->password == md5($password)) {
+					if ($this->verifyPassword($password, $data->password, $data->id_user)) {
 						$this->setSession($data);
 					} else {
 						$this->session->set_flashdata('logged_in', '0');
@@ -130,7 +154,7 @@ class Login extends CI_Controller {
 					redirect("Login/forgot_password");
 				} else {
 					$data = array(
-						'password'      => md5($konfirmasiPassword),
+						'password'      => password_hash($konfirmasiPassword, PASSWORD_BCRYPT),
 						'updated_at'	=> date('Y-m-d H:i:s')
 					);
 					$this->M_user->update($dataUser->id_user, $data);
@@ -286,7 +310,7 @@ class Login extends CI_Controller {
 			'jenis_kelamin'  => NULL,
 			'foto_profil'    => $fotoFile,
 			'username'       => $username,
-			'password'       => md5(uniqid('google_', true)),
+			'password'       => password_hash(bin2hex(random_bytes(32)), PASSWORD_BCRYPT),
 			'flag_type_account' => 'google',
 			'created_at'     => date('Y-m-d H:i:s'),
 			'updated_at'     => NULL

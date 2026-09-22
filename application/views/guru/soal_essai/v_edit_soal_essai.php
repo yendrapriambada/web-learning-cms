@@ -72,6 +72,7 @@
                             <br><br><br>
                             <div class="mt-3">
                                 <form id="form_advanced_validation" method="POST" action="<?= base_url().'guru/SoalEssai/do_edit'?>">
+                                    <input type="hidden" name="<?= $this->security->get_csrf_token_name() ?>" value="<?= $this->security->get_csrf_hash() ?>">
                                     <!-- Id Soal Essai -->
                                     <input type="hidden" name="id_soal_essai" value="<?= $dataById->id_soal_essai?>">
                                 

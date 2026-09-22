@@ -11,6 +11,17 @@
             $this->load->model('M_user',"",TRUE);
         }
 
+		/**
+		 * Cek password lama terhadap hash bcrypt atau MD5 legacy.
+		 */
+		private function verifyOldPassword($plainPassword, $storedHash)
+		{
+			if (password_get_info($storedHash)['algo'] !== null) {
+				return password_verify($plainPassword, $storedHash);
+			}
+			return hash_equals($storedHash, md5($plainPassword));
+		}
+
 		function index(){
             $data['pertemuan'] = $this->M_pertemuan->getRecordsView();
 			$this->load->view('siswa/v_ubah_password',$data);
@@ -30,7 +41,7 @@
 
 			if ($cekUser->num_rows() > 0) {
                 $dataUser = $cekUser->row();
-				if ($dataUser->password == md5($password_lama)) {
+				if ($this->verifyOldPassword($password_lama, $dataUser->password)) {
                     if ($password != $konfimasiPassword) {
                         $this->session->set_flashdata('ver', 'FALSE');
                         $this->session->set_flashdata('class_alert', 'danger');
@@ -40,10 +51,10 @@
                         if($this->validate() != false) {
                             $this->form_validation->set_error_delimiters();
                             $data = array(
-                                'password'      => md5($password),
+                                'password'      => password_hash($password, PASSWORD_BCRYPT),
                                 'updated_at'	=> date('Y-m-d H:i:s')
                             );
-                            $this->M_user->update($username, $data);
+                            $this->M_user->update($idUser, $data);
                             $this->session->set_flashdata('ver', 'FALSE');
                             $this->session->set_flashdata('class_alert', 'info');
                             $this->session->set_flashdata('alert', 'Password Berhasil di Ubah');

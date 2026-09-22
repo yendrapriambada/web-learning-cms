@@ -73,14 +73,17 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 $active_group = 'default';
 $query_builder = TRUE;
 
+// Kredensial database DIAMBIL DARI ENVIRONMENT VARIABLE, bukan hardcoded,
+// supaya password produksi tidak pernah ikut ter-commit ke Git lagi (lihat
+// Vulnerability Assessment, Temuan #3). Fallback di bawah hanya untuk dev
+// lokal (XAMPP: root tanpa password). Di server produksi, set DB_HOSTNAME,
+// DB_USERNAME, DB_PASSWORD, DB_DATABASE via SetEnv pada .htaccess/vhost.
 $db['default'] = array(
 	'dsn'	=> '',
-	'hostname' => 'localhost',
-	// 'username' => '***REDACTED_DB_USERNAME***',
-	// 'password' => '***REDACTED_DB_PASSWORD***',
-	'database' => 'ipar7647_db_ipa_terpadu',
-	'username' => 'root',
-	'password' => '',
+	'hostname' => getenv('DB_HOSTNAME') ?: 'localhost',
+	'username' => getenv('DB_USERNAME') ?: 'root',
+	'password' => getenv('DB_PASSWORD') ?: '',
+	'database' => getenv('DB_DATABASE') ?: 'ipar7647_db_ipa_terpadu',
 
 	'dbdriver' => 'mysqli',
 	'dbprefix' => '',

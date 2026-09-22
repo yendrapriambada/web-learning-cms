@@ -72,6 +72,7 @@
                             <br><br><br>
                             <div class="mt-3">
                                 <form id="form_advanced_validation" method="POST" action="<?= base_url().'guru/Pertemuan/do_create'?>">
+                                    <input type="hidden" name="<?= $this->security->get_csrf_token_name() ?>" value="<?= $this->security->get_csrf_hash() ?>">
                                     
                                     <!-- Nomor Pertemuan -->
                                     <div class="form-group form-float">

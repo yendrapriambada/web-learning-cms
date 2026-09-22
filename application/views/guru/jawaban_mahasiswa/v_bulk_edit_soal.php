@@ -91,6 +91,7 @@
                             </div>
 
                             <form method="POST" action="<?= base_url().'guru/JawabanMahasiswa/do_bulk_soal'?>" enctype="multipart/form-data">
+                                <input type="hidden" name="<?= $this->security->get_csrf_token_name() ?>" value="<?= $this->security->get_csrf_hash() ?>">
                                 <input type="hidden" name="no_kelompok" value="<?= htmlspecialchars($no_kelompok)?>">
                                 <input type="hidden" name="id_soal" value="<?= $id_soal?>">
 

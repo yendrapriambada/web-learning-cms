@@ -91,6 +91,7 @@
 
             <!-- Form bulk edit -->
             <form method="POST" action="<?= base_url().'guru/TestUnity/do_bulk_edit'?>">
+                <input type="hidden" name="<?= $this->security->get_csrf_token_name() ?>" value="<?= $this->security->get_csrf_hash() ?>">
                 <input type="hidden" name="no_kelompok" value="<?= htmlspecialchars($no_kelompok)?>">
 
                 <?php
@@ -179,6 +180,7 @@
             <!-- Form terpisah khusus tandai ulang pretest/posttest (tidak boleh nested
                  di dalam form simpan nilai di atas), diisi & di-submit lewat JS. -->
             <form method="POST" action="<?= base_url().'guru/TestUnity/retag'?>" id="retagForm">
+                <input type="hidden" name="<?= $this->security->get_csrf_token_name() ?>" value="<?= $this->security->get_csrf_hash() ?>">
                 <input type="hidden" name="no_kelompok" value="<?= htmlspecialchars($no_kelompok)?>">
                 <input type="hidden" name="practice" id="retagPractice">
                 <input type="hidden" name="pertanyaan" id="retagPertanyaan">

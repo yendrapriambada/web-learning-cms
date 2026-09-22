@@ -124,6 +124,7 @@
                            <?php if($p->jumlah_soal > 0) {?>
                            <!-- Form Isian -->
                            <form id="form_advanced_validation" method="POST" action="<?= base_url().'siswa/KoreksiWorksheet'?>" enctype="multipart/form-data">
+                               <input type="hidden" name="<?= $this->security->get_csrf_token_name() ?>" value="<?= $this->security->get_csrf_hash() ?>">
                               <!-- alert -->
                               <div class="alert alert-primary mb-3 mt-3" role="alert">
                                     <b>Perhatikan!</b>

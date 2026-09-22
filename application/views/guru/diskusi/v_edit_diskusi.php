@@ -71,6 +71,7 @@
                             <br><br><br>
                             <div class="mt-3">
                                 <form id="form_advanced_validation" method="POST" action="<?= base_url().'guru/Diskusi/do_edit'?>">
+                                    <input type="hidden" name="<?= $this->security->get_csrf_token_name() ?>" value="<?= $this->security->get_csrf_hash() ?>">
                                     <!-- ID Diskusi -->
                                     <input type="hidden" name="id_diskusi" value="<?= $dataById->id_diskusi?>"">
 
@@ -109,7 +110,7 @@
                                     <div class="form-group form-float">
                                         <div class="form-line">
                                             <label class="form-label" for="komentar">Komentar <span class="text-danger">*</span></label>
-                                            <textarea class="form-control" id="komentar" name="komentar" required rows="4"><?= $dataById->komentar?></textarea>
+                                            <textarea class="form-control" id="komentar" name="komentar" required rows="4"><?= html_escape($dataById->komentar)?></textarea>
                                         </div>
                                     </div>
                                     <?= form_error("komentar",

@@ -98,7 +98,7 @@
                                                 <td><?= $d->nama_lengkap?></td>
                                                 <td><?= $d->no_kelompok?></td>
                                                 <td><?= $d->role_user?></td>
-                                                <td><?= $d->komentar?></td>
+                                                <td><?= html_escape($d->komentar)?></td>
                                                 <td><?= $d->created_at?></td>
                                                 <td><?= $d->updated_at?></td>
                                                 <td>
