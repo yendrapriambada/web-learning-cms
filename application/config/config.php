@@ -231,7 +231,12 @@ $config['allow_get_array'] = TRUE;
 | your log files will fill up very fast.
 |
 */
-$config['log_threshold'] = 0;
+// Diset ke 1 (Error Messages) supaya error production (DB gagal konek, dll.)
+// tetap tercatat di application/logs/ untuk diagnosa, meski tidak lagi
+// ditampilkan ke pengunjung (ENVIRONMENT=production -> display_errors off).
+// Sebelumnya 0 (logging mati total) -> error jadi sama sekali tidak
+// terlihat dari mana pun saat production bermasalah.
+$config['log_threshold'] = 1;
 
 /*
 |--------------------------------------------------------------------------
