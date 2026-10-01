@@ -53,7 +53,16 @@
  *
  * NOTE: If you change these, also change the error_reporting() code below
  */
-	define('ENVIRONMENT', isset($_SERVER['CI_ENV']) ? $_SERVER['CI_ENV'] : 'development');
+	// CI_ENV (SetEnv di .htaccess) TIDAK selalu diteruskan ke PHP tergantung
+	// cara hosting menjalankan PHP (mis. PHP-FPM/LiteSpeed vs mod_php klasik).
+	// Supaya environment production tidak diam-diam jatuh ke 'development'
+	// (menampilkan error mentah ke publik) saat SetEnv gagal diteruskan,
+	// default-nya sekarang ditentukan dari SAPI: server PHP bawaan untuk
+	// dev lokal ('php -S ...') selalu melapor 'cli-server', sedangkan server
+	// sungguhan (Apache/LiteSpeed/FPM) tidak pernah melapor begitu.
+	define('ENVIRONMENT', isset($_SERVER['CI_ENV'])
+		? $_SERVER['CI_ENV']
+		: (PHP_SAPI === 'cli-server' ? 'development' : 'production'));
 
 /*
  *---------------------------------------------------------------

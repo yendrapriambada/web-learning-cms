@@ -41,3 +41,8 @@ user_guide_src/cilexer/pycilexer.egg-info/*
 /assets/sumber_belajar/
 # Word/Office temporary lock files
 ~$*
+
+# Kredensial production (dibuat manual di server dari file .example di
+# folder yang sama) - JANGAN PERNAH dihapus dari .gitignore ini.
+/application/config/production/database.php
+/application/config/production/config.php

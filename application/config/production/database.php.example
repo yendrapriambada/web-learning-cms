@@ -1,0 +1,51 @@
+<?php
+defined('BASEPATH') OR exit('No direct script access allowed');
+
+/*
+| -------------------------------------------------------------------
+| TEMPLATE — cara pakai (WAJIB DIBACA)
+| -------------------------------------------------------------------
+| 1. Salin file ini ke "database.php" (hapus akhiran ".example") DI
+|    SERVER PRODUKSI LANGSUNG via cPanel File Manager — JANGAN pernah
+|    lakukan ini di repo Git / commit / push.
+| 2. Isi 'username' dan 'password' di bawah dengan kredensial database
+|    produksi yang ASLI.
+| 3. File hasil salinan ("database.php", tanpa .example) sudah di-gitignore
+|    — tidak akan ikut ter-commit, dan tidak akan ter-timpa/terhapus oleh
+|    auto-deploy berikutnya. Nilai di application/config/database.php
+|    (folder induk) hanya dipakai sebagai fallback dan TIDAK PERLU diubah.
+|
+| Kenapa pakai cara ini, bukan SetEnv di .htaccess?
+| SetEnv tidak selalu diteruskan ke PHP tergantung cara hosting menjalankan
+| PHP (PHP-FPM/LiteSpeed vs mod_php klasik) — ini sempat menyebabkan
+| aplikasi gagal konek database di production. Folder config/production/
+| ini mekanisme bawaan CodeIgniter yang dibaca langsung oleh PHP, jadi
+| selalu bekerja di hosting manapun.
+*/
+
+$active_group = 'default';
+$query_builder = TRUE;
+
+$db['default'] = array(
+	'dsn'	=> '',
+	'hostname' => 'localhost',
+	'username' => 'GANTI_DENGAN_USERNAME_DB_PRODUKSI',
+	'password' => 'GANTI_DENGAN_PASSWORD_DB_PRODUKSI',
+	'database' => 'ipar7647_db_ipa_terpadu',
+
+	'dbdriver' => 'mysqli',
+	'dbprefix' => '',
+	'pconnect' => FALSE,
+	'db_debug' => FALSE,
+	'cache_on' => FALSE,
+	'cachedir' => '',
+	'char_set' => 'utf8',
+	'dbcollat' => 'utf8_general_ci',
+	'swap_pre' => '',
+	'encrypt' => FALSE,
+	'compress' => FALSE,
+	'stricton' => FALSE,
+	'failover' => array(),
+	'save_queries' => TRUE,
+	'port' => 3306,
+);

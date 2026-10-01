@@ -1,0 +1,14 @@
+<?php
+defined('BASEPATH') OR exit('No direct script access allowed');
+
+/*
+| -------------------------------------------------------------------
+| TEMPLATE — opsional, sama cara pakainya seperti database.php.example
+| -------------------------------------------------------------------
+| Salin ke "config.php" (hapus ".example") DI SERVER PRODUKSI langsung,
+| isi encryption_key dengan string acak (generate via:
+| php -r "echo bin2hex(random_bytes(32));"). File hasil salinan sudah
+| di-gitignore.
+*/
+
+$config['encryption_key'] = 'GANTI_DENGAN_KEY_ACAK_64_HEX_KARAKTER';
