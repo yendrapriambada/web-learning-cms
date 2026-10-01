@@ -1,22 +1,20 @@
-# Set environment ke production di server live agar pesan error PHP mentah
-# tidak ditampilkan ke pengunjung (lihat index.php: define('ENVIRONMENT', ...)).
-# Untuk pengembangan lokal, override via environment variable OS/vhost, JANGAN
-# hapus baris ini di server produksi.
+# CATATAN: environment production & kredensial database TIDAK LAGI
+# bergantung pada SetEnv di sini -- sempat menyebabkan aplikasi gagal
+# konek database karena SetEnv tidak selalu diteruskan ke PHP tergantung
+# cara hosting menjalankan PHP (PHP-FPM/LiteSpeed vs mod_php klasik).
+#
+# - Environment production: index.php sekarang mendeteksi otomatis
+#   (lihat define('ENVIRONMENT', ...) di index.php) -- tidak perlu SetEnv.
+# - Kredensial database & encryption key: isi langsung di server lewat
+#   application/config/production/database.php dan config.php (disalin
+#   dari file *.php.example di folder yang sama, HANYA di server, jangan
+#   pernah di-commit).
+#
+# Baris SetEnv di bawah ini aman dibiarkan sebagai cadangan kedua bila
+# hosting Anda kebetulan mendukungnya, tapi JANGAN diandalkan sebagai
+# satu-satunya cara.
 <IfModule mod_env.c>
   SetEnv CI_ENV production
-  # Opsional, disarankan: aktifkan baris di bawah dengan key acak Anda sendiri
-  # (generate via: php -r "echo bin2hex(random_bytes(32));"), JANGAN commit
-  # key asli ke Git.
-  # SetEnv CI_ENCRYPTION_KEY ganti-dengan-key-acak-64-hex-karakter
-
-  # Kredensial database produksi (lihat application/config/database.php).
-  # Isi dengan kredensial ASLI hanya di server, JANGAN pernah commit nilai
-  # asli ke Git. Setelah rotasi password (wajib, lihat laporan serah terima),
-  # isi baris-baris di bawah lalu hapus tanda pagar (#).
-  # SetEnv DB_HOSTNAME localhost
-  # SetEnv DB_USERNAME ganti-dengan-username-db-produksi
-  # SetEnv DB_PASSWORD ganti-dengan-password-db-produksi-yang-baru
-  # SetEnv DB_DATABASE ipar7647_db_ipa_terpadu
 </IfModule>
 
 <IfModule mod_rewrite.c>

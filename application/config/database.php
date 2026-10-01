@@ -73,11 +73,18 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 $active_group = 'default';
 $query_builder = TRUE;
 
-// Kredensial database DIAMBIL DARI ENVIRONMENT VARIABLE, bukan hardcoded,
-// supaya password produksi tidak pernah ikut ter-commit ke Git lagi (lihat
-// Vulnerability Assessment, Temuan #3). Fallback di bawah hanya untuk dev
-// lokal (XAMPP: root tanpa password). Di server produksi, set DB_HOSTNAME,
-// DB_USERNAME, DB_PASSWORD, DB_DATABASE via SetEnv pada .htaccess/vhost.
+// PENTING: kredensial database PRODUKSI yang sesungguhnya TIDAK diisi di
+// sini. Cara yang dipakai: application/config/production/database.php
+// (dibuat manual di server dari template database.php.example di folder
+// yang sama, sudah di-gitignore) -- CodeIgniter otomatis memakai file itu
+// sebagai pengganti file ini saat ENVIRONMENT === 'production'. Lihat
+// Vulnerability Assessment & Laporan Remediasi Keamanan untuk latar
+// belakang (kredensial sempat ter-commit ke Git, sudah dibersihkan).
+//
+// Nilai getenv() di bawah ini hanya fallback kedua (berguna bila hosting
+// Anda mendukung SetEnv sampai ke PHP) -- JANGAN diandalkan sebagai
+// satu-satunya cara, karena SetEnv tidak selalu diteruskan tergantung
+// cara hosting menjalankan PHP (PHP-FPM/LiteSpeed vs mod_php klasik).
 $db['default'] = array(
 	'dsn'	=> '',
 	'hostname' => getenv('DB_HOSTNAME') ?: 'localhost',
